@@ -27,9 +27,19 @@ bool IsDot(char ch)
     return ch == '.';
 }
 
+bool IsNumericChar(char ch)
+{
+    return IsDigit(ch) || IsDot(ch);
+}
+
 bool IsZero(char ch)
 {
     return ch == '0';
+}
+
+bool IsIdChar(char ch)
+{
+    return isalnum(ch) || ch == '_';
 }
 
 CalcLexer::CalcLexer(std::string sources)
@@ -61,11 +71,19 @@ Token CalcLexer::Read()
         case '-': return Token{TT_MINUS};
         case '*': return Token{TT_MULT};
         case '/': return Token{TT_DIV};
+        case '=': return Token{TT_EQUAL};
+        case ';': return Token{TT_SEMICOLON};
+        case '(': return Token{TT_LRBRACKET};
+        case ')': return Token{TT_RRBRACKET};
         default: break;
     }
 
-    if (IsDigit(next) || IsDot(next)) {
+    if (IsNumericChar(next)) {
         return ReadNumber(next);
+    }
+
+    if (IsIdChar(next)) {
+        return ReadId(next);
     }
 
     return Token{TT_ERROR};
@@ -95,7 +113,7 @@ Token CalcLexer::ReadNumber(char head)
     }
 
     bool isFraction = false;
-    while (m_position < m_sources.size() && (IsDigit(current) || IsDot(current))) {
+    while (m_position < m_sources.size() && IsNumericChar(current)) {
         if (IsDot(current) && !isFraction) {
             isFraction = true;
         }
@@ -103,9 +121,7 @@ Token CalcLexer::ReadNumber(char head)
             isValid = false;
         }
 
-        if (isValid) {
-            value += current;
-        }
+        value += current;
         current = m_sources[++m_position];
     }
 
@@ -113,6 +129,23 @@ Token CalcLexer::ReadNumber(char head)
         return Token{TT_ERROR};
     }
     return Token{TT_NUMBER, value};
+}
+
+Token CalcLexer::ReadId(char head)
+{
+    /*
+     * Reads the tail of number token and returns this token.
+     * PRECONDITION: first character already read.
+     * POSTCONDITION: all id characters have been read.
+     */
+    std::string value;
+    value += head;
+
+    while (m_position < m_sources.size() && IsIdChar(m_sources[m_position])) {
+        value += m_sources[m_position++];
+    }
+
+    return Token{TT_ID, value};
 }
 
 }

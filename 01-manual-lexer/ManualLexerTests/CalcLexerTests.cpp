@@ -19,6 +19,13 @@ string GetTokenName(TokenType type)
         case calc::TT_ERROR: return "error";
         case calc::TT_NUMBER: return "number";
         case calc::TT_PLUS: return "+";
+        case calc::TT_MULT: return "*";
+        case calc::TT_DIV: return "/";
+        case calc::TT_EQUAL: return "=";
+        case calc::TT_ID: return "id";
+        case calc::TT_SEMICOLON: return ";";
+        case calc::TT_LRBRACKET: return "(";
+        case calc::TT_RRBRACKET: return ")";
         default:return "<UNEXPECTED!!!>";
     }
 }
@@ -124,6 +131,56 @@ TEST_CASE("Can read one number", "[CalcLexer]")
     });
 }
 
+TEST_CASE("Can read one id", "[CalcLexer]")
+{
+    REQUIRE(Tokenize("123a") == TokenList{
+        Token{TT_NUMBER, "123"},
+        Token{TT_ID, "a"},
+    });
+    REQUIRE(Tokenize("_") == TokenList{
+        Token{TT_ID, "_"},
+    });
+    REQUIRE(Tokenize("__") == TokenList{
+        Token{TT_ID, "__"},
+    });
+    REQUIRE(Tokenize("_A") == TokenList{
+        Token{TT_ID, "_A"},
+    });
+    REQUIRE(Tokenize("A_") == TokenList{
+        Token{TT_ID, "A_"},
+    });
+    REQUIRE(Tokenize("A_A") == TokenList{
+        Token{TT_ID, "A_A"},
+    });
+    REQUIRE(Tokenize("a") == TokenList{
+        Token{TT_ID, "a"},
+    });
+    REQUIRE(Tokenize("A") == TokenList{
+        Token{TT_ID, "A"},
+    });
+    REQUIRE(Tokenize("aa") == TokenList{
+        Token{TT_ID, "aa"},
+    });
+    REQUIRE(Tokenize("AA") == TokenList{
+        Token{TT_ID, "AA"},
+    });
+    REQUIRE(Tokenize("aA") == TokenList{
+        Token{TT_ID, "aA"},
+    });
+    REQUIRE(Tokenize("a1") == TokenList{
+        Token{TT_ID, "a1"},
+    });
+    REQUIRE(Tokenize("aAb1") == TokenList{
+        Token{TT_ID, "aAb1"},
+    });
+    REQUIRE(Tokenize("a123") == TokenList{
+        Token{TT_ID, "a123"},
+    });
+    REQUIRE(Tokenize("a1b2cd34e5f") == TokenList{
+        Token{TT_ID, "a1b2cd34e5f"},
+    });
+}
+
 TEST_CASE("Can read one operator", "[CalcLexer]")
 {
     REQUIRE(Tokenize("+") == TokenList{
@@ -138,15 +195,27 @@ TEST_CASE("Can read one operator", "[CalcLexer]")
     REQUIRE(Tokenize("/") == TokenList{
         Token{TT_DIV},
     });
+    REQUIRE(Tokenize("=") == TokenList{
+        Token{TT_EQUAL},
+    });
+    REQUIRE(Tokenize(";") == TokenList{
+        Token{TT_SEMICOLON},
+    });
+    REQUIRE(Tokenize("(") == TokenList{
+        Token{TT_LRBRACKET},
+    });
+    REQUIRE(Tokenize(")") == TokenList{
+        Token{TT_RRBRACKET},
+    });
 }
 
 TEST_CASE("Can read expression tokens", "[CalcLexer]")
 {
-    REQUIRE(Tokenize("45+9+28-7-4-22*0*2*4/5/78/1") == TokenList{
+    REQUIRE(Tokenize("45+9;28-7-4-22=(0*2*4)/5/78/1;") == TokenList{
         Token{TT_NUMBER, "45"},
         Token{TT_PLUS},
         Token{TT_NUMBER, "9"},
-        Token{TT_PLUS},
+        Token{TT_SEMICOLON},
         Token{TT_NUMBER, "28"},
         Token{TT_MINUS},
         Token{TT_NUMBER, "7"},
@@ -154,34 +223,40 @@ TEST_CASE("Can read expression tokens", "[CalcLexer]")
         Token{TT_NUMBER, "4"},
         Token{TT_MINUS},
         Token{TT_NUMBER, "22"},
-        Token{TT_MULT},
+        Token{TT_EQUAL},
+        Token{TT_LRBRACKET},
         Token{TT_NUMBER, "0"},
         Token{TT_MULT},
         Token{TT_NUMBER, "2"},
         Token{TT_MULT},
         Token{TT_NUMBER, "4"},
+        Token{TT_RRBRACKET},
         Token{TT_DIV},
         Token{TT_NUMBER, "5"},
         Token{TT_DIV},
         Token{TT_NUMBER, "78"},
         Token{TT_DIV},
         Token{TT_NUMBER, "1"},
+        Token{TT_SEMICOLON},
     });
 
-    REQUIRE(Tokenize("5+7.005+5") == TokenList{
+    REQUIRE(Tokenize("5+7.005=5") == TokenList{
         Token{TT_NUMBER, "5"},
         Token{TT_PLUS},
         Token{TT_NUMBER, "7.005"},
-        Token{TT_PLUS},
+        Token{TT_EQUAL},
         Token{TT_NUMBER, "5"},
     });
 
-    REQUIRE(Tokenize("1.005-43.54/1") == TokenList{
+    REQUIRE(Tokenize("(1.005)-43.54/1;") == TokenList{
+        Token{TT_LRBRACKET},
         Token{TT_NUMBER, "1.005"},
+        Token{TT_RRBRACKET},
         Token{TT_MINUS},
         Token{TT_NUMBER, "43.54"},
         Token{TT_DIV},
         Token{TT_NUMBER, "1"},
+        Token{TT_SEMICOLON},
     });
     REQUIRE(Tokenize("1..005+43.54*1") == TokenList{
         Token{TT_ERROR},
@@ -196,6 +271,31 @@ TEST_CASE("Can read expression tokens", "[CalcLexer]")
         Token{TT_NUMBER, "43.54"},
         Token{TT_MINUS},
         Token{TT_NUMBER, "1"},
+    });
+    REQUIRE(Tokenize("var x = (1+ b - (y - 2) / 3) * (i + 5);") == TokenList{
+        Token{TT_ID, "var"},
+        Token{TT_ID, "x"},
+        Token{TT_EQUAL},
+        Token{TT_LRBRACKET},
+        Token{TT_NUMBER, "1"},
+        Token{TT_PLUS},
+        Token{TT_ID, "b"},
+        Token{TT_MINUS},
+        Token{TT_LRBRACKET},
+        Token{TT_ID, "y"},
+        Token{TT_MINUS},
+        Token{TT_NUMBER, "2"},
+        Token{TT_RRBRACKET},
+        Token{TT_DIV},
+        Token{TT_NUMBER, "3"},
+        Token{TT_RRBRACKET},
+        Token{TT_MULT},
+        Token{TT_LRBRACKET},
+        Token{TT_ID, "i"},
+        Token{TT_PLUS},
+        Token{TT_NUMBER, "5"},
+        Token{TT_RRBRACKET},
+        Token{TT_SEMICOLON},
     });
 }
 
@@ -292,6 +392,49 @@ TEST_CASE("Can read one number with whitespaces", "[CalcLexer]")
 
 }
 
+TEST_CASE("Can read one id with whitespaces", "[CalcLexer]")
+{
+    REQUIRE(Tokenize("  aBc12D3ef") == TokenList{
+        Token{TT_ID, "aBc12D3ef"},
+    });
+    REQUIRE(Tokenize("\taBc12D3ef") == TokenList{
+        Token{TT_ID, "aBc12D3ef"},
+    });
+    REQUIRE(Tokenize("   \t\taBc12D3ef") == TokenList{
+        Token{TT_ID, "aBc12D3ef"},
+    });
+    REQUIRE(Tokenize("\naBc12D3ef") == TokenList{
+        Token{TT_ID, "aBc12D3ef"},
+    });
+    REQUIRE(Tokenize("   \n  aBc12D3ef") == TokenList{
+        Token{TT_ID, "aBc12D3ef"},
+    });
+    REQUIRE(Tokenize("\t   \n  aBc12D3ef") == TokenList{
+        Token{TT_ID, "aBc12D3ef"},
+    });
+    REQUIRE(Tokenize("aBc12D3ef    ") == TokenList{
+        Token{TT_ID, "aBc12D3ef"},
+    });
+    REQUIRE(Tokenize("aBc12D3ef  \t\t   ") == TokenList{
+        Token{TT_ID, "aBc12D3ef"},
+    });
+    REQUIRE(Tokenize("aBc12D3ef  \n\t   ") == TokenList{
+        Token{TT_ID, "aBc12D3ef"},
+    });
+    REQUIRE(Tokenize("   aBc12D3ef   ") == TokenList{
+        Token{TT_ID, "aBc12D3ef"},
+    });
+    REQUIRE(Tokenize("  \t aBc12D3ef  \t ") == TokenList{
+        Token{TT_ID, "aBc12D3ef"},
+    });
+    REQUIRE(Tokenize("  \t\t aBc12D3ef  \t ") == TokenList{
+        Token{TT_ID, "aBc12D3ef"},
+    });
+    REQUIRE(Tokenize("  \t \t aBc12D3ef  \n\t ") == TokenList{
+        Token{TT_ID, "aBc12D3ef"},
+    });
+}
+
 TEST_CASE("Can read expression tokens with whitespaces")
 {
     REQUIRE(Tokenize("2 + 3") == TokenList{
@@ -307,5 +450,34 @@ TEST_CASE("Can read expression tokens with whitespaces")
     REQUIRE(Tokenize("\n+ \t7.1") == TokenList{
         Token{TT_PLUS},
         Token{TT_NUMBER, "7.1"},
+    });
+    REQUIRE(Tokenize("\n+ \t7.1") == TokenList{
+        Token{TT_PLUS},
+        Token{TT_NUMBER, "7.1"},
+    });
+    REQUIRE(Tokenize("var\nx \t   = (1+ \tb - \n(y-2\t) /   3)\t* (\ni + 5)\t;\n") == TokenList{
+        Token{TT_ID, "var"},
+        Token{TT_ID, "x"},
+        Token{TT_EQUAL},
+        Token{TT_LRBRACKET},
+        Token{TT_NUMBER, "1"},
+        Token{TT_PLUS},
+        Token{TT_ID, "b"},
+        Token{TT_MINUS},
+        Token{TT_LRBRACKET},
+        Token{TT_ID, "y"},
+        Token{TT_MINUS},
+        Token{TT_NUMBER, "2"},
+        Token{TT_RRBRACKET},
+        Token{TT_DIV},
+        Token{TT_NUMBER, "3"},
+        Token{TT_RRBRACKET},
+        Token{TT_MULT},
+        Token{TT_LRBRACKET},
+        Token{TT_ID, "i"},
+        Token{TT_PLUS},
+        Token{TT_NUMBER, "5"},
+        Token{TT_RRBRACKET},
+        Token{TT_SEMICOLON},
     });
 }

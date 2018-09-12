@@ -15,6 +15,11 @@ enum TokenType
     TT_MINUS,
     TT_MULT,
     TT_DIV,
+    TT_EQUAL,
+    TT_ID,
+    TT_SEMICOLON,
+    TT_LRBRACKET,
+    TT_RRBRACKET,
 };
 
 struct Token
