@@ -107,10 +107,17 @@ Token CalcLexer::ReadNumber(char head)
         current = m_sources[++m_position];
     }
 
+    const bool isCurrentCharId = IsIdChar(current);
+    if (isCurrentCharId) {
+        ReadId(current);
+        return Token{TT_ERROR};
+    }
+
     const bool isLastCharDot = IsDot(m_sources[m_position - 1]);
     if (!isValid || isLastCharDot) {
         return Token{TT_ERROR};
     }
+
     return Token{TT_NUMBER, value};
 }
 

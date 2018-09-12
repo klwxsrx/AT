@@ -105,7 +105,7 @@ TEST_CASE("Can read one number", "[CalcLexer]")
     REQUIRE(Tokenize("0..") == TokenList{
         Token{TT_ERROR},
     });
-    /*REQUIRE(Tokenize("123a") == TokenList{
+    REQUIRE(Tokenize("123a") == TokenList{
         Token{TT_ERROR},
     });
     REQUIRE(Tokenize("123_") == TokenList{
@@ -113,7 +113,7 @@ TEST_CASE("Can read one number", "[CalcLexer]")
     });
     REQUIRE(Tokenize("123_456") == TokenList{
         Token{TT_ERROR},
-    });*/
+    });
     REQUIRE(Tokenize("0.00") == TokenList{
         Token{TT_NUMBER, "0.00"},
     });
@@ -251,6 +251,14 @@ TEST_CASE("Can read expression tokens", "[CalcLexer]")
         Token{TT_NUMBER, "7.005"},
         Token{TT_EQUAL},
         Token{TT_NUMBER, "5"},
+    });
+
+    REQUIRE(Tokenize("5+7.005d+3") == TokenList{
+        Token{TT_NUMBER, "5"},
+        Token{TT_PLUS},
+        Token{TT_ERROR},
+        Token{TT_PLUS},
+        Token{TT_NUMBER, "3"},
     });
 
     REQUIRE(Tokenize("(1.005)-43.54/1;") == TokenList{
