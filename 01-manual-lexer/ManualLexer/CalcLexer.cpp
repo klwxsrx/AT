@@ -4,22 +4,7 @@ namespace calc
 {
 bool IsDigit(char ch)
 {
-    /*
-     * Returns true if given character is digit.
-     */
-    switch (ch) {
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9': return true;
-        default: return false;
-    }
+    return ch >= '0' && ch <= '9';
 }
 
 bool IsDot(char ch)
@@ -103,14 +88,11 @@ Token CalcLexer::ReadNumber(char head)
      * PRECONDITION: first character already read.
      * POSTCONDITION: all number characters have been read.
      */
-    std::string value;
+    std::string value(1, head);
     char current = m_sources[m_position];
 
-    bool isValid = IsDigit(head) && (!IsZero(head) || IsDot(current) || !IsDigit(current));
-    if (isValid)
-    {
-        value += head;
-    }
+    const bool isAnotherDigitAfterZeroChar = IsZero(head) && IsDigit(current);
+    bool isValid = IsDigit(head) && !isAnotherDigitAfterZeroChar;
 
     bool isFraction = false;
     while (m_position < m_sources.size() && IsNumericChar(current)) {
@@ -125,7 +107,8 @@ Token CalcLexer::ReadNumber(char head)
         current = m_sources[++m_position];
     }
 
-    if (!isValid || (m_position != 0 && IsDot(m_sources[m_position - 1]))) {
+    const bool isLastCharDot = IsDot(m_sources[m_position - 1]);
+    if (!isValid || isLastCharDot) {
         return Token{TT_ERROR};
     }
     return Token{TT_NUMBER, value};
@@ -138,8 +121,7 @@ Token CalcLexer::ReadId(char head)
      * PRECONDITION: first character already read.
      * POSTCONDITION: all id characters have been read.
      */
-    std::string value;
-    value += head;
+    std::string value(1, head);
 
     while (m_position < m_sources.size() && IsIdChar(m_sources[m_position])) {
         value += m_sources[m_position++];
