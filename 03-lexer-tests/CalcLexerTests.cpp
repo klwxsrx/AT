@@ -49,13 +49,18 @@ using TokenList = vector<Token>;
 TokenList Tokenize(string text)
 {
     TokenList results;
-    CalcLexer lexer{text};
+    CalcLexer lexer{std::move(text)};
     for (Token token = lexer.Read(); token.type != TT_END; token = lexer.Read()) {
         results.emplace_back(move(token));
     }
     return results;
 }
 
+}
+
+TEST_CASE("Not return tokens on empty line", "[CalcLexer]")
+{
+    REQUIRE(Tokenize("") == TokenList{});
 }
 
 TEST_CASE("Can read one number", "[CalcLexer]")
@@ -103,6 +108,9 @@ TEST_CASE("Can read one number", "[CalcLexer]")
         Token{TT_ERROR},
     });
     REQUIRE(Tokenize("0..") == TokenList{
+        Token{TT_ERROR},
+    });
+    REQUIRE(Tokenize("0a") == TokenList{
         Token{TT_ERROR},
     });
     REQUIRE(Tokenize("123a") == TokenList{

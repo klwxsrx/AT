@@ -28,7 +28,7 @@ bool IsIdChar(char ch)
 }
 
 CalcLexer::CalcLexer(std::string sources)
-    : m_sources(sources)
+    : m_sources(std::move(sources))
 {
 }
 
