@@ -1,6 +1,6 @@
-#include "../../lib/catch2/catch.hpp"
-#include "../ManualLexer/CalcLexer.h"
 #include <vector>
+#include <catch.hpp>
+#include "CalcLexer.h"
 
 using namespace std;
 using namespace calc;
