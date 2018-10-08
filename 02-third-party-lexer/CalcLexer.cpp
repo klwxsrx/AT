@@ -33,8 +33,11 @@ namespace calc
 
     lexertl::rules CalcLexer::getRules()
     {
-        lexertl::rules rules; // TODO: add ^(?:[0]|[1-9][0-9]*)(?:[.][0-9]+)?$
+        lexertl::rules rules;
         rules.push("[ \t\r\n]+", lexertl::rules::skip());
+        rules.push(R"text(([\.]|[0][0-9]|.*[.][0-9]*[.]|[0-9.]+[a-zA-Z\_]+)[0-9a-zA-Z\_\.]*)text", TT_ERROR);
+        rules.push("[0-9]+[\\.]", TT_ERROR);
+        rules.push("([0]|[1-9][0-9]*)([.][0-9]+)?", TT_NUMBER);
         rules.push("[a-zA-Z\\_][a-zA-Z\\_0-9]*", TT_ID);
         rules.push("\\+", TT_PLUS);
         rules.push("\\-", TT_MINUS);

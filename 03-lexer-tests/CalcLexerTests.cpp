@@ -104,11 +104,23 @@ TEST_CASE("Can read one number", "[CalcLexer]")
     REQUIRE(Tokenize("0.1.1") == TokenList{
         Token{TT_ERROR},
     });
+    REQUIRE(Tokenize("0.1.1.") == TokenList{
+        Token{TT_ERROR},
+    });
     REQUIRE(Tokenize("0.") == TokenList{
         Token{TT_ERROR},
     });
     REQUIRE(Tokenize("0..") == TokenList{
         Token{TT_ERROR},
+    });
+    REQUIRE(Tokenize("7.005d") == TokenList{
+        Token{TT_ERROR},
+    });
+    REQUIRE(Tokenize("75.d") == TokenList{
+        Token{TT_ERROR},
+    });
+    REQUIRE(Tokenize("75..d") == TokenList{
+            Token{TT_ERROR},
     });
     REQUIRE(Tokenize("0a") == TokenList{
         Token{TT_ERROR},
