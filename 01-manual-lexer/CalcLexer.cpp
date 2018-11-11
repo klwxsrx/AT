@@ -1,7 +1,5 @@
 #include "CalcLexer.h"
 
-namespace calc
-{
 bool IsDigit(char ch)
 {
     return ch >= '0' && ch <= '9';
@@ -135,6 +133,4 @@ Token CalcLexer::ReadId(char head)
     }
 
     return Token{TT_ID, value};
-}
-
 }

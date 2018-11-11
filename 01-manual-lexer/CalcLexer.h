@@ -4,9 +4,6 @@
 #include <cctype>
 #include "Token.h"
 
-namespace calc
-{
-
 class CalcLexer
 {
 public:
@@ -21,5 +18,3 @@ private:
     std::string m_sources;
     size_t m_position = 0;
 };
-
-}

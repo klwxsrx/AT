@@ -5,9 +5,6 @@
 #include <rules.hpp>
 #include "Token.h"
 
-namespace calc
-{
-
 class CalcLexer
 {
 public:
@@ -22,5 +19,3 @@ private:
     lexertl::siterator m_iterator;
     lexertl::siterator m_end;
 };
-
-}

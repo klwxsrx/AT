@@ -35,7 +35,12 @@ add_executable(ThirdPartyLexerTests 03-lexer-tests/CalcLexerTests.cpp 03-lexer-t
 target_include_directories(ThirdPartyLexerTests PRIVATE lib/catch2)
 target_link_libraries(ThirdPartyLexerTests Catch2 ThirdPartyLexer)
 
-### PARSER ###
-add_library(Parser 04-parser/CalcParser.h 04-parser/CalcParser.cpp)
-target_include_directories(Parser PUBLIC 04-parser)
-target_link_libraries(Parser ManualLexer)
+### MANUAL PARSER ###
+add_library(ManualParser 04-manual-parser/CalcParser.h 04-manual-parser/CalcParser.cpp)
+target_include_directories(ManualParser PUBLIC 04-manual-parser)
+target_link_libraries(ManualParser ManualLexer)
+
+### MANUAL PARSER TESTS ###
+add_executable(ManualParserTests 05-parser-tests/CalcParserTests.cpp 05-parser-tests/main.cpp)
+target_include_directories(ManualParserTests PRIVATE lib/catch2)
+target_link_libraries(ManualParserTests Catch2 ManualParser)

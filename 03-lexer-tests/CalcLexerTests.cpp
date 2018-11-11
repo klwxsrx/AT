@@ -3,10 +3,7 @@
 #include "CalcLexer.h"
 
 using namespace std;
-using namespace calc;
 
-namespace calc
-{
 bool operator==(const Token &a, const Token &b)
 {
     return a.type == b.type && a.value == b.value;
@@ -15,17 +12,17 @@ bool operator==(const Token &a, const Token &b)
 string GetTokenName(TokenType type)
 {
     switch (type) {
-        case calc::TT_END: return "end";
-        case calc::TT_ERROR: return "error";
-        case calc::TT_NUMBER: return "number";
-        case calc::TT_PLUS: return "+";
-        case calc::TT_MULT: return "*";
-        case calc::TT_DIV: return "/";
-        case calc::TT_EQUAL: return "=";
-        case calc::TT_ID: return "id";
-        case calc::TT_SEMICOLON: return ";";
-        case calc::TT_LRBRACKET: return "(";
-        case calc::TT_RRBRACKET: return ")";
+        case TT_END: return "end";
+        case TT_ERROR: return "error";
+        case TT_NUMBER: return "number";
+        case TT_PLUS: return "+";
+        case TT_MULT: return "*";
+        case TT_DIV: return "/";
+        case TT_EQUAL: return "=";
+        case TT_ID: return "id";
+        case TT_SEMICOLON: return ";";
+        case TT_LRBRACKET: return "(";
+        case TT_RRBRACKET: return ")";
         default:return "<UNEXPECTED!!!>";
     }
 }
@@ -39,10 +36,6 @@ std::ostream &operator<<(std::ostream &stream, const Token &token)
     stream << ")";
     return stream;
 }
-}
-
-namespace
-{
 
 using TokenList = vector<Token>;
 
@@ -54,8 +47,6 @@ TokenList Tokenize(string text)
         results.emplace_back(move(token));
     }
     return results;
-}
-
 }
 
 TEST_CASE("Not return tokens on empty line", "[CalcLexer]")
