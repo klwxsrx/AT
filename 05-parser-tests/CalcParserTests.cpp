@@ -23,3 +23,8 @@ TEST_CASE_METHOD(CreatedParserFixture, "Returns zero when parse empty string", "
 {
     CheckCalculationResult("", 0.0);
 }
+
+TEST_CASE_METHOD(CreatedParserFixture, "Can calculate one line expression ", "[CalcParser]")
+{
+    CheckCalculationResult("2", 4.0);
+}
