@@ -105,7 +105,7 @@ double CalcParser::ParseAtom()
 {
     if (TryMatch({TT_NUMBER}))
     {
-        return std::stod(GetTokenValue(m_tokenPosition));
+        return std::stod(GetTokenValue(m_tokenPosition - 1));
     }
     else if (TryMatch({TT_ID}))
     {
@@ -164,7 +164,7 @@ std::string CalcParser::GetTokenValue(size_t position)
         throw std::runtime_error("Token not exists");
     }
 
-    Token& token = m_tokens[m_tokenPosition];
+    Token& token = m_tokens[position];
     if (!token.value)
     {
         throw std::runtime_error("Token hasn't value");
