@@ -20,7 +20,7 @@ private:
     double ParseAtom();
 
     bool TryMatch(TokenTypeList const& tokenTypes);
-    void TryMatchThrowOtherwise(TokenTypeList const &tokenTypes);
+    void TryMatchThrowExceptionOtherwise(TokenTypeList const &tokenTypes);
 
     void AssignVariable(std::string const& name, double value);
     double GetVariableValue(std::string const& name);

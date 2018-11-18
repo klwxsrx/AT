@@ -50,12 +50,12 @@ double CalcParser::ParseStatement()
 
         double result = ParseAdd();
         AssignVariable(variableName, result);
-        TryMatchThrowOtherwise({TokenType::TT_SEMICOLON});
+        TryMatchThrowExceptionOtherwise({TokenType::TT_SEMICOLON});
         return result;
     }
 
     double result = ParseAdd();
-    TryMatchThrowOtherwise({TokenType::TT_SEMICOLON});
+    TryMatchThrowExceptionOtherwise({TokenType::TT_SEMICOLON});
     return result;
 }
 
@@ -112,9 +112,9 @@ double CalcParser::ParseAtom()
         return GetVariableValue(GetTokenValue(m_tokenPosition - 1));
     }
 
-    TryMatchThrowOtherwise({TT_LRBRACKET});
+    TryMatchThrowExceptionOtherwise({TT_LRBRACKET});
     double result = ParseAdd();
-    TryMatchThrowOtherwise({TT_RRBRACKET});
+    TryMatchThrowExceptionOtherwise({TT_RRBRACKET});
 
     return result;
 }
@@ -134,7 +134,7 @@ bool CalcParser::TryMatch(TokenTypeList const& tokenTypes)
     return true;
 }
 
-void CalcParser::TryMatchThrowOtherwise(TokenTypeList const &tokenTypes)
+void CalcParser::TryMatchThrowExceptionOtherwise(TokenTypeList const &tokenTypes)
 {
     if (!TryMatch(tokenTypes))
     {

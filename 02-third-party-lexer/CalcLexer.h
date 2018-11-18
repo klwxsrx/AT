@@ -13,7 +13,6 @@ public:
 
 private:
     static lexertl::rules getRules();
-    void handleNumberToken(Token& token, std::string && value);
 
     lexertl::state_machine m_lexer;
     lexertl::siterator m_iterator;
