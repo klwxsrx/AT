@@ -49,6 +49,10 @@ target_link_libraries(ManualParser ManualLexer)
 add_executable(ManualParserTests 06-parser-tests/CalcParserTests.cpp 06-parser-tests/main.cpp)
 target_link_libraries(ManualParserTests Catch2 ManualParser)
 
+### MANUAL PARSER UI ###
+add_executable(ManualParserUI 07-parser-ui/main.cpp)
+target_link_libraries(ManualParserUI ManualParser)
+
 ### LEMON GENERATE PARSER ###
 add_custom_target(LemonGenerateParser
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/lib/lemon/lempar.c ${CMAKE_BINARY_DIR}/lempar.c
