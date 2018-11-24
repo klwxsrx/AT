@@ -67,5 +67,5 @@ add_library(ThirdPartyParser
         05-third-party-parser/CalcParser.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.h
         ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.cpp)
-        target_include_directories(ThirdPartyParser PUBLIC 05-third-party-parser)
+target_include_directories(ThirdPartyParser PUBLIC 05-third-party-parser)
 target_link_libraries(ThirdPartyParser ManualLexer)
