@@ -53,13 +53,19 @@ target_link_libraries(ManualParserTests Catch2 ManualParser)
 add_executable(ManualParserUI 07-parser-ui/main.cpp)
 target_link_libraries(ManualParserUI ManualParser)
 
-### LEMON GENERATE PARSER ###
-add_custom_target(LemonGenerateParser
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/lib/lemon/lempar.c ${CMAKE_BINARY_DIR}/lempar.c
-        COMMAND Lemon 05-third-party-parser/ParserGrammar.y
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
 ### THIRD PARTY PARSER ###
-add_library(ThirdPartyParser INTERFACE) # TODO: make cpp wrapper
-target_include_directories(ManualParser PUBLIC 05-third-party-parser)
-add_dependencies(ThirdPartyParser LemonGenerateParser)
+add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.h ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.cpp
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/lib/lemon/lempar.c ${CMAKE_BINARY_DIR}/
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/05-third-party-parser/* ${CMAKE_BINARY_DIR}/
+        COMMAND Lemon -q -l -s ${CMAKE_BINARY_DIR}/ParseCalcGrammar.y
+        COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c ${CMAKE_BINARY_DIR}/ParseCalcGrammar.cpp)
+add_library(ThirdPartyParser
+        05-third-party-parser/ICalcParser.h
+        05-third-party-parser/LemonToken.h
+        05-third-party-parser/CalcParser.h
+        05-third-party-parser/CalcParser.cpp
+        ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.h
+        ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.cpp)
+        target_include_directories(ThirdPartyParser PUBLIC 05-third-party-parser)
+target_link_libraries(ThirdPartyParser ManualLexer)

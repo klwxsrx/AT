@@ -1,4 +1,4 @@
-%name ParserGrammar
+%name ParseCalcGrammar
 
 %token_prefix T_
 
@@ -6,18 +6,17 @@
 %default_type {LemonToken}
 
 // Сгенерированная функция продвижения состояния парсера будет принимать 4-й аргумент
-%extra_argument {CCalcParser *pParser}
+%extra_argument {CalcParser *pParser}
 
 // Этот блок кода запускается при синтаксической ошибке.
 %syntax_error {
     (void)yymajor; // глушим предупреждения.
-    pParse->OnError(TOKEN); // переменная TOKEN имеет тип, указанный в директиве '%token_type'
+    pParser->OnError(TOKEN); // переменная TOKEN имеет тип, указанный в директиве '%token_type'
 }
 
 // Этот блок кода запускается при переполнении стека LALR-парсера
 %stack_overflow {
-    (void)yypMinor; // глушим предупреждения.
-    pParse->OnStackOverflow();
+    pParser->OnStackOverflow();
 }
 
 // Деструктор будет выполняться перед выбросом токена со стека,
@@ -25,7 +24,7 @@
 %token_destructor {
     (void)yypParser;
     (void)yypminor;
-    (void)pParse;
+    (void)pParser;
 }
 
 // Код в блоке директивы include попадёт в начало генерируемого файла "*.c"
