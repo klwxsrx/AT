@@ -59,6 +59,7 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/lib/lemon/lempar.c ${CMAKE_BINARY_DIR}/
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/05-third-party-parser/* ${CMAKE_BINARY_DIR}/
         COMMAND Lemon -q -l -s ${CMAKE_BINARY_DIR}/ParseCalcGrammar.y
+        COMMAND sed -i 's/typedef union {/typedef union U {\\nU\(\){}\;\\n~U\(\){}\;/g' ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c
         COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c ${CMAKE_BINARY_DIR}/ParseCalcGrammar.cpp)
 add_library(ThirdPartyParser
         05-third-party-parser/ICalcParser.h
@@ -69,3 +70,4 @@ add_library(ThirdPartyParser
         ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.cpp)
 target_include_directories(ThirdPartyParser PUBLIC 05-third-party-parser)
 target_link_libraries(ThirdPartyParser ManualLexer)
+target_compile_options(ThirdPartyParser PRIVATE -fpermissive)
