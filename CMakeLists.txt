@@ -46,14 +46,14 @@ target_include_directories(ManualParser PUBLIC 04-manual-parser)
 target_link_libraries(ManualParser ManualLexer)
 
 ### MANUAL PARSER TESTS ###
-#add_executable(ManualParserTests 06-parser-tests/CalcParserTests.cpp 06-parser-tests/main.cpp)
-#target_link_libraries(ManualParserTests Catch2 ManualParser)
+add_executable(ManualParserTests 07-parser-tests/CalcParserTests.cpp 07-parser-tests/main.cpp)
+target_link_libraries(ManualParserTests Catch2 ManualParser)
 
 ### MANUAL PARSER UI ###
-add_executable(ManualParserUI 07-parser-ui/main.cpp)
+add_executable(ManualParserUI 08-parser-ui/main.cpp)
 target_link_libraries(ManualParserUI ManualParser)
 
-### THIRD PARTY PARSER ###
+### LEMON GENERATED PARSER ###
 add_custom_command(
         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.h ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.cpp
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/lib/lemon/lempar.c ${CMAKE_BINARY_DIR}/
@@ -64,6 +64,8 @@ add_custom_command(
         COMMAND sed -i '/YYMINORTYPE yylhsminor\;/d' ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c
         COMMAND sed -i '/switch\( yyruleno \){/i YYMINORTYPE yylhsminor\;' ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c
         COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c ${CMAKE_BINARY_DIR}/ParseCalcGrammar.cpp)
+
+### THIRD PARTY PARSER ###
 add_library(ThirdPartyParser
         05-third-party-parser/ICalcParser.h
         05-third-party-parser/LemonToken.h
@@ -76,5 +78,19 @@ target_include_directories(ThirdPartyParser PRIVATE ${CMAKE_BINARY_DIR})
 target_link_libraries(ThirdPartyParser ManualLexer)
 
 ### THIRD PARTY PARSER TESTS ###
-add_executable(ThirdPartyParserTests 06-parser-tests/CalcParserTests.cpp 06-parser-tests/main.cpp)
+add_executable(ThirdPartyParserTests 07-parser-tests/CalcParserTests.cpp 07-parser-tests/main.cpp)
 target_link_libraries(ThirdPartyParserTests Catch2 ThirdPartyParser)
+
+### AST PARSER ###
+add_library(AstParser
+        06-ast-parser/ICalcParser.h
+        06-ast-parser/LemonToken.h
+        06-ast-parser/CalcParser.h
+        06-ast-parser/CalcParser.cpp
+        06-ast-parser/AstNode.cpp
+        06-ast-parser/AstNode.h
+        ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.h
+        ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.cpp)
+target_include_directories(AstParser PUBLIC 06-ast-parser)
+target_include_directories(AstParser PRIVATE ${CMAKE_BINARY_DIR})
+target_link_libraries(AstParser ManualLexer)
