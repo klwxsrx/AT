@@ -16,8 +16,8 @@ public:
 
     double Calculate(std::string const& source) override;
 
-    double GetIdValue(const char *id) const;
-    void SetIdValue(const char *id, double value);
+    double GetVariableValue(const char *id) const;
+    void AssignVariable(const char *id, double value);
     void SetResult(double result);
     void OnError(LemonToken const& token);
     void OnStackOverflow();

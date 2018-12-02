@@ -8,8 +8,8 @@ const std::map<TokenType, int> CalcParser::m_lemonTokenMap({
     {TT_MINUS, LT_SUB},
     {TT_MULT, LT_MUL},
     {TT_DIV, LT_DIV},
-    //{TT_EQUAL, LT_ASSIGN},
-    //{TT_ID, LT_ID},
+    {TT_EQUAL, LT_ASSIGN},
+    {TT_ID, LT_ID},
     {TT_SEMICOLON, LT_SEMICOLON},
     {TT_LRBRACKET, LT_OPENING_PARENTHESIS},
     {TT_RRBRACKET, LT_CLOSING_PARENTHESIS}
@@ -53,7 +53,7 @@ double CalcParser::Calculate(std::string const& sources)
     return m_result;
 }
 
-double CalcParser::GetIdValue(const char* id) const
+double CalcParser::GetVariableValue(const char* id) const
 {
     auto it = m_variables.find(id);
     if (it == m_variables.end())
@@ -63,7 +63,7 @@ double CalcParser::GetIdValue(const char* id) const
     return it->second;
 }
 
-void CalcParser::SetIdValue(const char* id, double value)
+void CalcParser::AssignVariable(const char* id, double value)
 {
     m_variables[id] = value;
 }

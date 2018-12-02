@@ -34,16 +34,35 @@
     #include "CalcParser.h"
 } // end %include
 
-translation_unit ::= statement.
+translation_unit ::= program.
 
-statement(A) ::= expression(B) SEMICOLON.
+program(A) ::= statement(B) SEMICOLON.
 {
     A.value = B.value;
     pParser->SetResult(A.value);
 }
 
-statement(A) ::= expression SEMICOLON statement(C).
+program(A) ::= program statement(B) SEMICOLON.
 {
+    A.value = B.value;
+    pParser->SetResult(A.value);
+}
+
+program(A) ::= expression(B) SEMICOLON.
+{
+    A.value = B.value;
+    pParser->SetResult(A.value);
+}
+
+program(A) ::= program expression(B) SEMICOLON.
+{
+    A.value = B.value;
+    pParser->SetResult(A.value);
+}
+
+statement(A) ::= ID(B) ASSIGN expression(C).
+{
+    pParser->AssignVariable(B.id, C.value);
     A.value = C.value;
     pParser->SetResult(A.value);
 }
@@ -79,4 +98,9 @@ expression(A) ::= OPENING_PARENTHESIS expression(B) CLOSING_PARENTHESIS.
 expression(A) ::= NUMBER(B).
 {
     A.value = B.value;
+}
+
+expression(A) ::= ID(B).
+{
+    A.value = pParser->GetVariableValue(B.id);
 }

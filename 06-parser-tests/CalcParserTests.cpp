@@ -88,9 +88,12 @@ TEST_CASE_METHOD(CreatedParserFixture, "Can calculate multiple expressions", "[C
 
 TEST_CASE_METHOD(CreatedParserFixture, "Can assign variables", "[CalcParser]")
 {
-    CheckCalculationResult("a=2;a;", 2.0);
-    CheckCalculationResult("a=2+2*2;a;", 6.0);
-    CheckCalculationResult("var=4;var=3.14;var;", 3.14);
+    CheckCalculationResult("a=2;", 2.0);
+    CheckCalculationResult("b=2;b;", 2.0);
+    CheckCalculationResult("c=2;c;3;", 3.0);
+    CheckCalculationResult("d=2+2*2;d;", 6.0);
+    CheckCalculationResult("e=4;e=3.14;", 3.14);
+    CheckCalculationResult("f=4;f=3.14;f;", 3.14);
 }
 
 TEST_CASE_METHOD(CreatedParserFixture, "Can use variables in expressions", "[CalcParser]")
