@@ -87,8 +87,18 @@ add_library(AstParser
         06-ast-parser/LemonToken.h
         06-ast-parser/CalcParser.h
         06-ast-parser/CalcParser.cpp
-        06-ast-parser/AstNode.cpp
-        06-ast-parser/AstNode.h
+        06-ast-parser/ast/IExpression.h
+        06-ast-parser/ast/BinaryExpression.h
+        06-ast-parser/ast/BinaryExpression.cpp
+        06-ast-parser/context/IInterpreterContext.h
+        06-ast-parser/ast/LiteralExpression.cpp
+        06-ast-parser/ast/LiteralExpression.h
+        06-ast-parser/ast/VariableExpression.cpp
+        06-ast-parser/ast/VariableExpression.h
+        06-ast-parser/ast/AssignExpression.cpp
+        06-ast-parser/ast/AssignExpression.h
+        06-ast-parser/context/InterpreterContext.cpp
+        06-ast-parser/context/InterpreterContext.h
         ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.h
         ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.cpp)
 target_include_directories(AstParser PUBLIC 06-ast-parser)
