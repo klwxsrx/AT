@@ -83,7 +83,7 @@ TEST_CASE_METHOD(CreatedParserFixture, "Can calculate in right arithmetical orde
 TEST_CASE_METHOD(CreatedParserFixture, "Can calculate multiple expressions", "[CalcParser]")
 {
     CheckCalculationResult("2;3;", 3.0);
-    CheckCalculationResult("2;3;", 3.0);
+    CheckCalculationResult("2;3;4;5;", 5.0);
 }
 
 TEST_CASE_METHOD(CreatedParserFixture, "Can assign variables", "[CalcParser]")

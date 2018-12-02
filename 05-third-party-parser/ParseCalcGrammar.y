@@ -1,6 +1,6 @@
 %name ParseCalcGrammar
 
-%token_prefix T_
+%token_prefix LT_
 
 %token_type {LemonToken}
 %default_type {LemonToken}
@@ -34,63 +34,49 @@
     #include "CalcParser.h"
 } // end %include
 
-program ::= statement(A).
+translation_unit ::= statement.
+
+statement(A) ::= expression(B) SEMICOLON.
 {
+    A.value = B.value;
     pParser->SetResult(A.value);
 }
 
-statement(A) ::= ID(B) ASSIGN add(C).
+statement(A) ::= expression SEMICOLON statement(C).
 {
-    pParser->SetIdValue(B.id, C.value);
     A.value = C.value;
+    pParser->SetResult(A.value);
 }
 
-statement(A) ::= add(B).
-{
-    A.value = B.value;
-}
-
-add(A) ::= mult(B).
-{
-    A.value = B.value;
-}
-
-add(A) ::= add(B) PLUS mult(C).
+expression(A) ::= expression(B) PLUS expression(C).
 {
     A.value = B.value + C.value;
 }
 
-add(A) ::= add(B) SUB mult(C).
+expression(A) ::= expression(B) SUB expression(C).
 {
     A.value = B.value - C.value;
 }
 
-mult(A) ::= atom(B).
-{
-    A.value = B.value;
-}
-
-mult(A) ::= mult(B) MUL atom(C).
+expression(A) ::= expression(B) MUL expression(C).
 {
     A.value = B.value * C.value;
 }
 
-mult(A) ::= mult(B) DIV atom(C).
+expression(A) ::= expression(B) DIV expression(C).
 {
     A.value = B.value / C.value;
 }
 
-atom(A) ::= NUMBER(B).
+%left PLUS SUB.
+%left MUL DIV.
+
+expression(A) ::= OPENING_PARENTHESIS expression(B) CLOSING_PARENTHESIS.
 {
     A.value = B.value;
 }
 
-atom(A) ::= ID(B).
-{
-    A.value = pParser->GetIdValue(B.id);
-}
-
-atom(A) ::= OPENING_PARENTHESIS add(B) CLOSING_PARENTHESIS.
+expression(A) ::= NUMBER(B).
 {
     A.value = B.value;
 }

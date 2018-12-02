@@ -46,8 +46,8 @@ target_include_directories(ManualParser PUBLIC 04-manual-parser)
 target_link_libraries(ManualParser ManualLexer)
 
 ### MANUAL PARSER TESTS ###
-add_executable(ManualParserTests 06-parser-tests/CalcParserTests.cpp 06-parser-tests/main.cpp)
-target_link_libraries(ManualParserTests Catch2 ManualParser)
+#add_executable(ManualParserTests 06-parser-tests/CalcParserTests.cpp 06-parser-tests/main.cpp)
+#target_link_libraries(ManualParserTests Catch2 ManualParser)
 
 ### MANUAL PARSER UI ###
 add_executable(ManualParserUI 07-parser-ui/main.cpp)
@@ -59,7 +59,10 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/lib/lemon/lempar.c ${CMAKE_BINARY_DIR}/
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/05-third-party-parser/* ${CMAKE_BINARY_DIR}/
         COMMAND Lemon -q -l -s ${CMAKE_BINARY_DIR}/ParseCalcGrammar.y
+        # workaround to transform c lang code to cpp compatible
         COMMAND sed -i 's/typedef union {/typedef union U {\\nU\(\){}\;\\n~U\(\){}\;/g' ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c
+        COMMAND sed -i '/YYMINORTYPE yylhsminor\;/d' ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c
+        COMMAND sed -i '/switch\( yyruleno \){/i YYMINORTYPE yylhsminor\;' ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c
         COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c ${CMAKE_BINARY_DIR}/ParseCalcGrammar.cpp)
 add_library(ThirdPartyParser
         05-third-party-parser/ICalcParser.h
@@ -69,5 +72,9 @@ add_library(ThirdPartyParser
         ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.h
         ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.cpp)
 target_include_directories(ThirdPartyParser PUBLIC 05-third-party-parser)
+target_include_directories(ThirdPartyParser PRIVATE ${CMAKE_BINARY_DIR})
 target_link_libraries(ThirdPartyParser ManualLexer)
-target_compile_options(ThirdPartyParser PRIVATE -fpermissive)
+
+### THIRD PARTY PARSER TESTS ###
+add_executable(ThirdPartyParserTests 06-parser-tests/CalcParserTests.cpp 06-parser-tests/main.cpp)
+target_link_libraries(ThirdPartyParserTests Catch2 ThirdPartyParser)
