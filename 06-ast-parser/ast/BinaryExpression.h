@@ -11,10 +11,11 @@ public:
         Div,
     };
 
-    BinaryExpression(Ptr && left, Operation operation, Ptr && right);
+    BinaryExpression(IExpression* left, Operation operation, IExpression* right);
     double Evaluate(IInterpreterContext &context) const override;
 
 private:
-    Ptr m_left, m_right;
+    IExpression* m_left;
+    IExpression* m_right;
     Operation m_operation;
 };

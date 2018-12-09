@@ -38,39 +38,19 @@ CalcParser::~CalcParser()
 
 double CalcParser::Calculate(std::string const& sources)
 {
-    ReadTokens(sources);
-    if (m_tokens.empty())
-    {
-        return 0.0;
-    }
+    ParseSources(sources);
 
-    for (auto const& token : m_tokens)
+    double result = 0.0;
+    for (auto const& astExpression : m_expressionList)
     {
-        ParseCalcGrammar(m_parser, token.type, token, this);
+        result = astExpression->Evaluate(m_interpreterContext);
     }
-    LemonToken token;
-    ParseCalcGrammar(m_parser, END_TOKEN, token, this);
-    return m_result;
+    return result;
 }
 
-double CalcParser::GetVariableValue(const char* id) const
+void CalcParser::AddStatement(IExpression* expression)
 {
-    auto it = m_variables.find(id);
-    if (it == m_variables.end())
-    {
-        throw std::runtime_error("Variable not found");
-    }
-    return it->second;
-}
-
-void CalcParser::AssignVariable(const char* id, double value)
-{
-    m_variables[id] = value;
-}
-
-void CalcParser::SetResult(double result)
-{
-    m_result = result;
+    m_expressionList.push_back(expression);
 }
 
 void CalcParser::OnError(LemonToken const& token)
@@ -81,6 +61,22 @@ void CalcParser::OnError(LemonToken const& token)
 void CalcParser::OnStackOverflow()
 {
     throw std::runtime_error("Stack overflow!");
+}
+
+void CalcParser::ParseSources(std::string const& sources)
+{
+    ReadTokens(sources);
+    if (m_tokens.empty())
+    {
+        return;
+    }
+
+    for (auto const& token : m_tokens)
+    {
+        ParseCalcGrammar(m_parser, token.type, token, this);
+    }
+    LemonToken token;
+    ParseCalcGrammar(m_parser, END_TOKEN, token, this);
 }
 
 void CalcParser::ReadTokens(std::string const& sources)

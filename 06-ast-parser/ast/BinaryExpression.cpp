@@ -1,7 +1,7 @@
 #include "BinaryExpression.h"
 
-BinaryExpression::BinaryExpression(Ptr && left, Operation operation, Ptr && right)
-    : m_left(std::move(left)), m_operation(operation), m_right(std::move(right))
+BinaryExpression::BinaryExpression(IExpression* left, Operation operation, IExpression* right)
+    : m_left(left), m_operation(operation), m_right(right)
 {
 }
 

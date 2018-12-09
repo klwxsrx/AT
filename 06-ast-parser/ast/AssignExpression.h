@@ -3,10 +3,10 @@
 
 class AssignExpression : public IExpression {
 public:
-    AssignExpression(std::string const& variableName, Ptr && expression);
+    AssignExpression(std::string const& variableName, IExpression* expression);
     double Evaluate(IInterpreterContext &context) const override;
 
 private:
     std::string m_variableName;
-    Ptr m_expression;
+    IExpression* m_expression;
 };

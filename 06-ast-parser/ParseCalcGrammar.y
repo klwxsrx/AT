@@ -29,62 +29,63 @@
 
 // Код в блоке директивы include попадёт в начало генерируемого файла "*.c"
 %include {
+    #include <memory>
     #include <assert.h>
     #include "LemonToken.h"
     #include "CalcParser.h"
+
+    struct SRecord
+    {
+        IExpression* expr;
+    };
+
 } // end %include
 
 translation_unit ::= statement.
 
-statement(A) ::= expression(B) SEMICOLON.
+statement ::= expression(B) SEMICOLON.
 {
-    A.value = B.value;
-    pParser->SetResult(A.value);
+    pParser->AddStatement(B.expr);
 }
 
-statement(A) ::= statement expression(B) SEMICOLON.
+statement ::= statement expression(B) SEMICOLON.
 {
-    A.value = B.value;
-    pParser->SetResult(A.value);
+    pParser->AddStatement(B.expr);
 }
 
-statement(A) ::= expression_with_assign(B) SEMICOLON.
+statement ::= expression_with_assign(B) SEMICOLON.
 {
-    A.value = B.value;
-    pParser->SetResult(A.value);
+    pParser->AddStatement(B.expr);
 }
 
-statement(A) ::= statement expression_with_assign(B) SEMICOLON.
+statement ::= statement expression_with_assign(B) SEMICOLON.
 {
-    A.value = B.value;
-    pParser->SetResult(A.value);
+    pParser->AddStatement(B.expr);
 }
 
 expression_with_assign(A) ::= ID(B) ASSIGN expression(C).
 {
-    pParser->AssignVariable(B.id, C.value);
-    A.value = C.value;
-    pParser->SetResult(A.value);
+    A.expr = pParser->CreateExpression<AssignExpression>(B.id, C.expr);
 }
 
 expression(A) ::= expression(B) PLUS expression(C).
 {
-    A.value = B.value + C.value;
+    A.expr = pParser->CreateExpression<BinaryExpression>(B.expr, BinaryExpression::Operation::Add, C.expr);
 }
 
 expression(A) ::= expression(B) SUB expression(C).
 {
-    A.value = B.value - C.value;
+    A.expr = pParser->CreateExpression<BinaryExpression>(B.expr, BinaryExpression::Operation::Sub, C.expr);
 }
 
 expression(A) ::= expression(B) MUL expression(C).
 {
-    A.value = B.value * C.value;
+    A.expr = pParser->CreateExpression<BinaryExpression>(B.expr, BinaryExpression::Operation::Mult, C.expr);
 }
 
 expression(A) ::= expression(B) DIV expression(C).
 {
-    A.value = B.value / C.value;
+    A.expr = pParser->CreateExpression<BinaryExpression>(B.expr, BinaryExpression::Operation::Div, C.expr);
 }
 
 %left PLUS SUB.
@@ -92,15 +93,18 @@ expression(A) ::= expression(B) DIV expression(C).
 
 expression(A) ::= OPENING_PARENTHESIS expression(B) CLOSING_PARENTHESIS.
 {
-    A.value = B.value;
+    A.expr = B.expr;
 }
 
 expression(A) ::= NUMBER(B).
 {
-    A.value = B.value;
+    A.expr = pParser->CreateExpression<LiteralExpression>(B.value);
 }
 
 expression(A) ::= ID(B).
 {
-    A.value = pParser->GetVariableValue(B.id);
+    A.expr = pParser->CreateExpression<VariableExpression>(B.id);
 }
+
+%type expression SRecord
+%type expression_with_assign SRecord

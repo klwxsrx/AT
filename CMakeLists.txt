@@ -57,7 +57,7 @@ target_link_libraries(ManualParserUI ManualParser)
 add_custom_command(
         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.h ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.cpp
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/lib/lemon/lempar.c ${CMAKE_BINARY_DIR}/
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/05-third-party-parser/* ${CMAKE_BINARY_DIR}/
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/06-ast-parser/* ${CMAKE_BINARY_DIR}/ # TODO: make two commands
         COMMAND Lemon -q -l -s ${CMAKE_BINARY_DIR}/ParseCalcGrammar.y
         # workaround to transform c lang code to cpp compatible
         COMMAND sed -i 's/typedef union {/typedef union U {\\nU\(\){}\;\\n~U\(\){}\;/g' ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c
@@ -104,3 +104,7 @@ add_library(AstParser
 target_include_directories(AstParser PUBLIC 06-ast-parser)
 target_include_directories(AstParser PRIVATE ${CMAKE_BINARY_DIR})
 target_link_libraries(AstParser ManualLexer)
+
+### AST PARSER TESTS ###
+add_executable(AstParserTests 07-parser-tests/CalcParserTests.cpp 07-parser-tests/main.cpp)
+target_link_libraries(AstParserTests Catch2 AstParser)
