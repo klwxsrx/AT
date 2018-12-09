@@ -53,29 +53,28 @@ target_link_libraries(ManualParserTests Catch2 ManualParser)
 add_executable(ManualParserUI 08-parser-ui/main.cpp)
 target_link_libraries(ManualParserUI ManualParser)
 
-### LEMON GENERATED PARSER ###
-add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.h ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.cpp
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/lib/lemon/lempar.c ${CMAKE_BINARY_DIR}/
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/06-ast-parser/* ${CMAKE_BINARY_DIR}/ # TODO: make two commands
-        COMMAND Lemon -q -l -s ${CMAKE_BINARY_DIR}/ParseCalcGrammar.y
-        # workaround to transform c lang code to cpp compatible
-        COMMAND sed -i 's/typedef union {/typedef union U {\\nU\(\){}\;\\n~U\(\){}\;/g' ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c
-        COMMAND sed -i '/YYMINORTYPE yylhsminor\;/d' ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c
-        COMMAND sed -i '/switch\( yyruleno \){/i YYMINORTYPE yylhsminor\;' ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c
-        COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/ParseCalcGrammar.c ${CMAKE_BINARY_DIR}/ParseCalcGrammar.cpp)
-
 ### THIRD PARTY PARSER ###
 add_library(ThirdPartyParser
         05-third-party-parser/ICalcParser.h
         05-third-party-parser/LemonToken.h
         05-third-party-parser/CalcParser.h
         05-third-party-parser/CalcParser.cpp
-        ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.h
-        ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.cpp)
+        05-third-party-parser/ParseCalcGrammar.h
+        05-third-party-parser/ParseCalcGrammar.cpp)
 target_include_directories(ThirdPartyParser PUBLIC 05-third-party-parser)
-target_include_directories(ThirdPartyParser PRIVATE ${CMAKE_BINARY_DIR})
 target_link_libraries(ThirdPartyParser ManualLexer)
+add_custom_command(
+        OUTPUT 05-third-party-parser/ParseCalcGrammar.h 05-third-party-parser/ParseCalcGrammar.cpp
+        COMMAND Lemon -q -l -s ${CMAKE_SOURCE_DIR}/05-third-party-parser/ParseCalcGrammar.y -d${CMAKE_SOURCE_DIR}/05-third-party-parser/ -T${CMAKE_SOURCE_DIR}/lib/lemon/lempar.c
+        COMMAND sed -i 's/typedef union {/typedef union U {\\nU\(\){}\;\\n~U\(\){}\;/g' ${CMAKE_SOURCE_DIR}/05-third-party-parser/ParseCalcGrammar.c
+        COMMAND sed -i '/YYMINORTYPE yylhsminor\;/d' ${CMAKE_SOURCE_DIR}/05-third-party-parser/ParseCalcGrammar.c
+        COMMAND sed -i '/switch\( yyruleno \){/i YYMINORTYPE yylhsminor\;' ${CMAKE_SOURCE_DIR}/05-third-party-parser/ParseCalcGrammar.c
+        COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_SOURCE_DIR}/05-third-party-parser/ParseCalcGrammar.c ${CMAKE_SOURCE_DIR}/05-third-party-parser/ParseCalcGrammar.cpp
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/05-third-party-parser/ParseCalcGrammar.cpp ${CMAKE_BINARY_DIR}/05-third-party-parser/ParseCalcGrammar.cpp)
+add_custom_command(TARGET ThirdPartyParser POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_SOURCE_DIR}/05-third-party-parser/ParseCalcGrammar.h
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_SOURCE_DIR}/05-third-party-parser/ParseCalcGrammar.cpp
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/05-third-party-parser)
 
 ### THIRD PARTY PARSER TESTS ###
 add_executable(ThirdPartyParserTests 07-parser-tests/CalcParserTests.cpp 07-parser-tests/main.cpp)
@@ -99,11 +98,23 @@ add_library(AstParser
         06-ast-parser/ast/AssignExpression.h
         06-ast-parser/context/InterpreterContext.cpp
         06-ast-parser/context/InterpreterContext.h
-        ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.h
-        ${CMAKE_CURRENT_BINARY_DIR}/ParseCalcGrammar.cpp)
+        06-ast-parser/ParseCalcGrammar.h
+        06-ast-parser/ParseCalcGrammar.cpp)
 target_include_directories(AstParser PUBLIC 06-ast-parser)
 target_include_directories(AstParser PRIVATE ${CMAKE_BINARY_DIR})
 target_link_libraries(AstParser ManualLexer)
+add_custom_command(
+        OUTPUT 06-ast-parser/ParseCalcGrammar.h 06-ast-parser/ParseCalcGrammar.cpp
+        COMMAND Lemon -q -l -s ${CMAKE_SOURCE_DIR}/06-ast-parser/ParseCalcGrammar.y -d${CMAKE_SOURCE_DIR}/06-ast-parser/ -T${CMAKE_SOURCE_DIR}/lib/lemon/lempar.c
+        COMMAND sed -i 's/typedef union {/typedef union U {\\nU\(\){}\;\\n~U\(\){}\;/g' ${CMAKE_SOURCE_DIR}/06-ast-parser/ParseCalcGrammar.c
+        COMMAND sed -i '/YYMINORTYPE yylhsminor\;/d' ${CMAKE_SOURCE_DIR}/06-ast-parser/ParseCalcGrammar.c
+        COMMAND sed -i '/switch\( yyruleno \){/i YYMINORTYPE yylhsminor\;' ${CMAKE_SOURCE_DIR}/06-ast-parser/ParseCalcGrammar.c
+        COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_SOURCE_DIR}/06-ast-parser/ParseCalcGrammar.c ${CMAKE_SOURCE_DIR}/06-ast-parser/ParseCalcGrammar.cpp
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/06-ast-parser/ParseCalcGrammar.cpp ${CMAKE_BINARY_DIR}/06-ast-parser/ParseCalcGrammar.cpp)
+add_custom_command(TARGET AstParser POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_SOURCE_DIR}/06-ast-parser/ParseCalcGrammar.h
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_SOURCE_DIR}/06-ast-parser/ParseCalcGrammar.cpp
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/06-ast-parser)
 
 ### AST PARSER TESTS ###
 add_executable(AstParserTests 07-parser-tests/CalcParserTests.cpp 07-parser-tests/main.cpp)
