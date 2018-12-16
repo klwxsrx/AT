@@ -46,11 +46,11 @@ target_include_directories(ManualParser PUBLIC 04-manual-parser)
 target_link_libraries(ManualParser ManualLexer)
 
 ### MANUAL PARSER TESTS ###
-add_executable(ManualParserTests 07-parser-tests/CalcParserTests.cpp 07-parser-tests/main.cpp)
+add_executable(ManualParserTests 08-parser-tests/CalcParserTests.cpp 08-parser-tests/main.cpp)
 target_link_libraries(ManualParserTests Catch2 ManualParser)
 
 ### MANUAL PARSER UI ###
-add_executable(ManualParserUI 08-parser-ui/main.cpp)
+add_executable(ManualParserUI 09-parser-ui/main.cpp)
 target_link_libraries(ManualParserUI ManualParser)
 
 ### THIRD PARTY PARSER ###
@@ -77,7 +77,7 @@ add_custom_command(TARGET ThirdPartyParser POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/05-third-party-parser)
 
 ### THIRD PARTY PARSER TESTS ###
-add_executable(ThirdPartyParserTests 07-parser-tests/CalcParserTests.cpp 07-parser-tests/main.cpp)
+add_executable(ThirdPartyParserTests 08-parser-tests/CalcParserTests.cpp 08-parser-tests/main.cpp)
 target_link_libraries(ThirdPartyParserTests Catch2 ThirdPartyParser)
 
 ### AST PARSER ###
@@ -117,5 +117,41 @@ add_custom_command(TARGET AstParser POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/06-ast-parser)
 
 ### AST PARSER TESTS ###
-add_executable(AstParserTests 07-parser-tests/CalcParserTests.cpp 07-parser-tests/main.cpp)
+add_executable(AstParserTests 08-parser-tests/CalcParserTests.cpp 08-parser-tests/main.cpp)
 target_link_libraries(AstParserTests Catch2 AstParser)
+
+### AST ASM PARSER ###
+add_library(AstAsmParser
+        07-ast-asm-parser/ICalcParser.h
+        07-ast-asm-parser/LemonToken.h
+        07-ast-asm-parser/CalcParser.h
+        07-ast-asm-parser/CalcParser.cpp
+        07-ast-asm-parser/ast/IExpression.h
+        07-ast-asm-parser/ast/BinaryExpression.h
+        07-ast-asm-parser/ast/BinaryExpression.cpp
+        07-ast-asm-parser/context/IInterpreterContext.h
+        07-ast-asm-parser/ast/LiteralExpression.cpp
+        07-ast-asm-parser/ast/LiteralExpression.h
+        07-ast-asm-parser/ast/VariableExpression.cpp
+        07-ast-asm-parser/ast/VariableExpression.h
+        07-ast-asm-parser/ast/AssignExpression.cpp
+        07-ast-asm-parser/ast/AssignExpression.h
+        07-ast-asm-parser/context/InterpreterContext.cpp
+        07-ast-asm-parser/context/InterpreterContext.h
+        07-ast-asm-parser/ParseCalcGrammar.h
+        07-ast-asm-parser/ParseCalcGrammar.cpp)
+target_include_directories(AstAsmParser PUBLIC 07-ast-asm-parser)
+target_include_directories(AstAsmParser PRIVATE ${CMAKE_BINARY_DIR})
+target_link_libraries(AstAsmParser ManualLexer)
+add_custom_command(
+        OUTPUT 07-ast-asm-parser/ParseCalcGrammar.h 07-ast-asm-parser/ParseCalcGrammar.cpp
+        COMMAND Lemon -q -l -s ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ParseCalcGrammar.y -d${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ -T${CMAKE_SOURCE_DIR}/lib/lemon/lempar.c
+        COMMAND sed -i 's/typedef union {/typedef union U {\\nU\(\){}\;\\n~U\(\){}\;/g' ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ParseCalcGrammar.c
+        COMMAND sed -i '/YYMINORTYPE yylhsminor\;/d' ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ParseCalcGrammar.c
+        COMMAND sed -i '/switch\( yyruleno \){/i YYMINORTYPE yylhsminor\;' ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ParseCalcGrammar.c
+        COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ParseCalcGrammar.c ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ParseCalcGrammar.cpp
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ParseCalcGrammar.cpp ${CMAKE_BINARY_DIR}/07-ast-asm-parser/ParseCalcGrammar.cpp)
+add_custom_command(TARGET AstAsmParser POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ParseCalcGrammar.h
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ParseCalcGrammar.cpp
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/07-ast-asm-parser)
