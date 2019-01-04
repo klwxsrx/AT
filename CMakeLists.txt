@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.10)
 project(AT)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -122,27 +122,31 @@ target_link_libraries(AstParserTests Catch2 AstParser)
 
 ### AST ASM PARSER ###
 add_library(AstAsmParser
-        07-ast-asm-parser/ICalcParser.h
         07-ast-asm-parser/LemonToken.h
         07-ast-asm-parser/CalcParser.h
         07-ast-asm-parser/CalcParser.cpp
-        07-ast-asm-parser/ast/IExpression.h
-        07-ast-asm-parser/ast/BinaryExpression.h
-        07-ast-asm-parser/ast/BinaryExpression.cpp
+        07-ast-asm-parser/lexer/Token.h
+        07-ast-asm-parser/lexer/CalcLexer.h
+        07-ast-asm-parser/lexer/CalcLexer.cpp
+        07-ast-asm-parser/ast/AstStatementPool.h
+        07-ast-asm-parser/ast/AstStatementPool.cpp
+        07-ast-asm-parser/ast/expression/IExpression.h
+        07-ast-asm-parser/ast/expression/BinaryExpression.h
+        07-ast-asm-parser/ast/expression/BinaryExpression.cpp
+        07-ast-asm-parser/ast/expression/LiteralExpression.cpp
+        07-ast-asm-parser/ast/expression/LiteralExpression.h
+        07-ast-asm-parser/ast/expression/VariableExpression.cpp
+        07-ast-asm-parser/ast/expression/VariableExpression.h
+        07-ast-asm-parser/ast/expression/AssignExpression.cpp
+        07-ast-asm-parser/ast/expression/AssignExpression.h
+        07-ast-asm-parser/ast/expression/visitor/IExpressionVisitor.h
         07-ast-asm-parser/context/IInterpreterContext.h
-        07-ast-asm-parser/ast/LiteralExpression.cpp
-        07-ast-asm-parser/ast/LiteralExpression.h
-        07-ast-asm-parser/ast/VariableExpression.cpp
-        07-ast-asm-parser/ast/VariableExpression.h
-        07-ast-asm-parser/ast/AssignExpression.cpp
-        07-ast-asm-parser/ast/AssignExpression.h
         07-ast-asm-parser/context/InterpreterContext.cpp
         07-ast-asm-parser/context/InterpreterContext.h
         07-ast-asm-parser/ParseCalcGrammar.h
         07-ast-asm-parser/ParseCalcGrammar.cpp)
 target_include_directories(AstAsmParser PUBLIC 07-ast-asm-parser)
 target_include_directories(AstAsmParser PRIVATE ${CMAKE_BINARY_DIR})
-target_link_libraries(AstAsmParser ManualLexer)
 add_custom_command(
         OUTPUT 07-ast-asm-parser/ParseCalcGrammar.h 07-ast-asm-parser/ParseCalcGrammar.cpp
         COMMAND Lemon -q -l -s ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ParseCalcGrammar.y -d${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ -T${CMAKE_SOURCE_DIR}/lib/lemon/lempar.c

@@ -4,49 +4,42 @@
 #include <map>
 #include <vector>
 #include <string.h>
-#include <ast/LiteralExpression.h>
-#include <ast/VariableExpression.h>
-#include <ast/BinaryExpression.h>
-#include <ast/AssignExpression.h>
-#include "ICalcParser.h"
 #include "LemonToken.h"
-#include "CalcLexer.h"
+#include "ast/expression/IExpression.h"
+#include "ast/AstStatementPool.h"
 #include "context/InterpreterContext.h"
-#include "ast/IExpression.h"
+#include "lexer/ILexer.h"
 
-class CalcParser final : public ICalcParser {
+class CalcParser final {
     typedef std::vector<LemonToken> TokenList;
-    typedef std::vector<IExpression*> ExpressionList;
 public:
     CalcParser();
-    ~CalcParser() override;
+    ~CalcParser();
 
-    double Calculate(std::string const& source) override;
+    AstStatementPool BuildAst(ILexer & lexer);
     void AddStatement(IExpression* expression);
 
     template <class ExpressionT, class ...TArgs>
     IExpression* CreateExpression(TArgs&&... args)
     {
-        static_assert(std::is_base_of<IExpression, ExpressionT>::value);
-        m_nodePool.emplace_back(std::make_unique<ExpressionT>(std::forward<TArgs>(args)...));
-        return static_cast<IExpression*>(m_nodePool.back().get());
+        return m_currentAst.CreateExpression(std::forward<TArgs>(args)...);
     };
 
     void OnError(LemonToken const& token);
     void OnStackOverflow();
 
 private:
-    void ParseSources(std::string const& sources);
+    void ParseSources(ILexer & lexer);
+    void ReadTokens(ILexer & lexer);
 
-    void ReadTokens(std::string const& sources);
     static LemonToken GetLemonToken(Token const& token);
 
     void* m_parser = nullptr;
 
     TokenList m_tokens;
     InterpeterContext m_interpreterContext;
-    ExpressionList m_expressionList;
-    std::vector<IExpression::Ptr> m_nodePool;
+    AstStatementPool m_currentAst;
+
     static const std::map<TokenType, int> m_lemonTokenMap;
 };
 

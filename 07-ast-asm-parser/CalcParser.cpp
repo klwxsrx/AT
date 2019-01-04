@@ -12,7 +12,8 @@ const std::map<TokenType, int> CalcParser::m_lemonTokenMap({
     {TT_ID, LT_ID},
     {TT_SEMICOLON, LT_SEMICOLON},
     {TT_LRBRACKET, LT_OPENING_PARENTHESIS},
-    {TT_RRBRACKET, LT_CLOSING_PARENTHESIS}
+    {TT_RRBRACKET, LT_CLOSING_PARENTHESIS},
+    {TT_PRINT, LT_PRINT},
 });
 
 CalcParser::CalcParser()
@@ -36,21 +37,16 @@ CalcParser::~CalcParser()
     ParseCalcGrammarFree(m_parser, retain);
 }
 
-double CalcParser::Calculate(std::string const& sources)
+AstStatementPool CalcParser::BuildAst(ILexer & lexer)
 {
-    ParseSources(sources);
-
-    double result = 0.0;
-    for (auto const& astExpression : m_expressionList)
-    {
-        result = astExpression->Evaluate(m_interpreterContext);
-    }
-    return result;
+    m_currentAst = AstStatementPool();
+    ParseSources(lexer);
+    return m_currentAst;
 }
 
 void CalcParser::AddStatement(IExpression* expression)
 {
-    m_expressionList.push_back(expression);
+    m_currentAst.AddStatement(expression);
 }
 
 void CalcParser::OnError(LemonToken const& token)
@@ -63,9 +59,9 @@ void CalcParser::OnStackOverflow()
     throw std::runtime_error("Stack overflow!");
 }
 
-void CalcParser::ParseSources(std::string const& sources)
+void CalcParser::ParseSources(ILexer & lexer)
 {
-    ReadTokens(sources);
+    ReadTokens(lexer);
     if (m_tokens.empty())
     {
         return;
@@ -79,15 +75,9 @@ void CalcParser::ParseSources(std::string const& sources)
     ParseCalcGrammar(m_parser, END_TOKEN, token, this);
 }
 
-void CalcParser::ReadTokens(std::string const& sources)
+void CalcParser::ReadTokens(ILexer & lexer)
 {
     m_tokens.clear();
-    if (sources.empty())
-    {
-        return;
-    }
-
-    CalcLexer lexer(sources);
     while (true)
     {
         Token token = lexer.Read();

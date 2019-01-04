@@ -41,26 +41,36 @@
 
 } // end %include
 
-translation_unit ::= statement.
+translation_unit ::= program.
 
-statement ::= expression(B) SEMICOLON.
+statement ::= statement PRINT NUMBER(A).
+{
+    pParser->AddStatement(pParser->CreateExpression<PrintLiteralExpression>(A.value));
+}
+
+statement ::= statement PRINT ID(A).
+{
+    pParser->AddStatement(pParser->CreateExpression<PrintVariableExpression>(A.id));
+}
+
+statement ::= various_expression(B).
 {
     pParser->AddStatement(B.expr);
 }
 
-statement ::= statement expression(B) SEMICOLON.
+statement ::= statement various_expression(B) SEMICOLON.
 {
     pParser->AddStatement(B.expr);
 }
 
-statement ::= expression_with_assign(B) SEMICOLON.
+various_expression(A) ::= expression(B).
 {
-    pParser->AddStatement(B.expr);
+    A.expr = B.expr;
 }
 
-statement ::= statement expression_with_assign(B) SEMICOLON.
+various_expression(A) ::= expression_with_assign(B).
 {
-    pParser->AddStatement(B.expr);
+    A.expr = B.expr;
 }
 
 expression_with_assign(A) ::= ID(B) ASSIGN expression(C).
@@ -106,5 +116,6 @@ expression(A) ::= ID(B).
     A.expr = pParser->CreateExpression<VariableExpression>(B.id);
 }
 
+%type various_expression SRecord
 %type expression SRecord
 %type expression_with_assign SRecord
