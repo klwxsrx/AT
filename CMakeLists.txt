@@ -121,10 +121,10 @@ add_executable(AstParserTests 08-parser-tests/CalcParserTests.cpp 08-parser-test
 target_link_libraries(AstParserTests Catch2 AstParser)
 
 ### AST ASM PARSER ###
-add_library(AstAsmParser
-        07-ast-asm-parser/LemonToken.h
-        07-ast-asm-parser/CalcParser.h
-        07-ast-asm-parser/CalcParser.cpp
+add_executable(AstAsmParser
+        07-ast-asm-parser/grammar/LemonToken.h
+        07-ast-asm-parser/parser/CalcParser.h
+        07-ast-asm-parser/parser/CalcParser.cpp
         07-ast-asm-parser/lexer/Token.h
         07-ast-asm-parser/lexer/CalcLexer.h
         07-ast-asm-parser/lexer/CalcLexer.cpp
@@ -139,17 +139,17 @@ add_library(AstAsmParser
         07-ast-asm-parser/ast/expression/VariableExpression.h
         07-ast-asm-parser/ast/expression/AssignExpression.cpp
         07-ast-asm-parser/ast/expression/AssignExpression.h
-        07-ast-asm-parser/ast/expression/visitor/IExpressionVisitor.h
         07-ast-asm-parser/context/IInterpreterContext.h
         07-ast-asm-parser/context/InterpreterContext.cpp
         07-ast-asm-parser/context/InterpreterContext.h
         07-ast-asm-parser/ParseCalcGrammar.h
-        07-ast-asm-parser/ParseCalcGrammar.cpp)
+        07-ast-asm-parser/ParseCalcGrammar.cpp
+        07-ast-asm-parser/main.cpp)
 target_include_directories(AstAsmParser PUBLIC 07-ast-asm-parser)
 target_include_directories(AstAsmParser PRIVATE ${CMAKE_BINARY_DIR})
 add_custom_command(
         OUTPUT 07-ast-asm-parser/ParseCalcGrammar.h 07-ast-asm-parser/ParseCalcGrammar.cpp
-        COMMAND Lemon -q -l -s ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ParseCalcGrammar.y -d${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ -T${CMAKE_SOURCE_DIR}/lib/lemon/lempar.c
+        COMMAND Lemon -q -l -s ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/grammar/ParseCalcGrammar.y -d${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ -T${CMAKE_SOURCE_DIR}/lib/lemon/lempar.c
         COMMAND sed -i 's/typedef union {/typedef union U {\\nU\(\){}\;\\n~U\(\){}\;/g' ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ParseCalcGrammar.c
         COMMAND sed -i '/YYMINORTYPE yylhsminor\;/d' ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ParseCalcGrammar.c
         COMMAND sed -i '/switch\( yyruleno \){/i YYMINORTYPE yylhsminor\;' ${CMAKE_SOURCE_DIR}/07-ast-asm-parser/ParseCalcGrammar.c

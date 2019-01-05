@@ -11,7 +11,7 @@ public:
     IExpression* CreateExpression(TArgs&&... args)
     {
         static_assert(std::is_base_of<IExpression, ExpressionT>::value);
-        m_nodePool.emplace_back(std::make_unique<ExpressionT>(std::forward<TArgs>(args)...));
+        m_nodePool.emplace_back(std::make_shared<ExpressionT>(std::forward<TArgs>(args)...));
         return static_cast<IExpression*>(m_nodePool.back().get());
     };
 

@@ -4,8 +4,8 @@
 
 class IExpression {
 public:
-    typedef std::unique_ptr<IExpression> Ptr;
+    typedef std::shared_ptr<IExpression> Ptr;
 
-    virtual double Evaluate(IInterpreterContext & context) const = 0;
+    virtual double Evaluate(IInterpreterContext & context) const = 0; // TODO: delete
     virtual ~IExpression() = default;
 };

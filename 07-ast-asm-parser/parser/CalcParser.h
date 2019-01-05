@@ -2,12 +2,10 @@
 
 #include <exception>
 #include <map>
-#include <vector>
 #include <string.h>
-#include "LemonToken.h"
+#include "grammar/LemonToken.h"
 #include "ast/expression/IExpression.h"
 #include "ast/AstStatementPool.h"
-#include "context/InterpreterContext.h"
 #include "lexer/ILexer.h"
 
 class CalcParser final {
@@ -22,7 +20,7 @@ public:
     template <class ExpressionT, class ...TArgs>
     IExpression* CreateExpression(TArgs&&... args)
     {
-        return m_currentAst.CreateExpression(std::forward<TArgs>(args)...);
+        return m_currentAst.CreateExpression<ExpressionT>(args...);
     };
 
     void OnError(LemonToken const& token);
@@ -35,9 +33,7 @@ private:
     static LemonToken GetLemonToken(Token const& token);
 
     void* m_parser = nullptr;
-
     TokenList m_tokens;
-    InterpeterContext m_interpreterContext;
     AstStatementPool m_currentAst;
 
     static const std::map<TokenType, int> m_lemonTokenMap;
