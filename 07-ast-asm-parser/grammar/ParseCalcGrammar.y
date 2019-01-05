@@ -47,14 +47,14 @@
 
 translation_unit ::= statement.
 
-statement ::= statement PRINT NUMBER.//(A). // TODO:
+statement ::= statement PRINT NUMBER(A).
 {
-    //pParser->AddStatement(pParser->CreateExpression<PrintLiteralExpression>(A.value));
+    pParser->AddStatement(pParser->CreateExpression<PrintLiteralExpression>(A.value));
 }
 
-statement ::= statement PRINT ID.//(A).
+statement ::= statement PRINT ID(A).
 {
-    //pParser->AddStatement(pParser->CreateExpression<PrintVariableExpression>(A.id));
+    pParser->AddStatement(pParser->CreateExpression<PrintVariableExpression>(A.id));
 }
 
 statement ::= various_expression(B) SEMICOLON.

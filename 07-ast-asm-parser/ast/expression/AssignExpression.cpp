@@ -5,8 +5,17 @@ AssignExpression::AssignExpression(std::string const& variableName, IExpression*
 {
 }
 
-double AssignExpression::Evaluate(IInterpreterContext &context) const {
-    double value = m_expression->Evaluate(context);
-    context.AssignVariable(m_variableName, value);
-    return value;
+IExpression* AssignExpression::Left() const
+{
+    return nullptr;
+}
+
+IExpression* AssignExpression::Right() const
+{
+    return m_expression;
+}
+
+void AssignExpression::AcceptVisitor(IExpressionVisitor& visitor) const
+{
+    return visitor.Expression(IExpressionVisitor::Expression::Assign);
 }

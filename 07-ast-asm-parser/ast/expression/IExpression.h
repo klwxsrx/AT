@@ -1,11 +1,11 @@
 #pragma once
 #include <memory>
-#include "context/IInterpreterContext.h"
+#include "ast/visitor/IExpressionVisitor.h"
 
 class IExpression {
 public:
     typedef std::shared_ptr<IExpression> Ptr;
 
-    virtual double Evaluate(IInterpreterContext & context) const = 0; // TODO: delete
+    virtual void AcceptVisitor(IExpressionVisitor& visitor) const = 0;
     virtual ~IExpression() = default;
 };

@@ -5,6 +5,16 @@ VariableExpression::VariableExpression(std::string const& name)
 {
 }
 
-double VariableExpression::Evaluate(IInterpreterContext &context) const {
-    return context.GetVariableValue(m_variableName);
+void VariableExpression::AcceptVisitor(IExpressionVisitor &visitor) const {
+    visitor.VariableExpression(m_variableName);
 }
+
+IExpression *VariableExpression::Left() const {
+    return nullptr;
+}
+
+IExpression *VariableExpression::Right() const {
+    return nullptr;
+}
+
+

@@ -5,17 +5,30 @@ BinaryExpression::BinaryExpression(IExpression* left, Operation operation, IExpr
 {
 }
 
-double BinaryExpression::Evaluate(IInterpreterContext &context) const
-{
+IExpression *BinaryExpression::Left() const {
+    return m_left;
+}
+
+IExpression *BinaryExpression::Right() const {
+    return m_right;
+}
+
+void BinaryExpression::AcceptVisitor(IExpressionVisitor &visitor) const {
     switch (m_operation)
     {
         case Operation::Add:
-            return m_left->Evaluate(context) + m_right->Evaluate(context);
+            visitor.Expression(IExpressionVisitor::Expression::Add);
+            break;
         case Operation::Sub:
-            return m_left->Evaluate(context) - m_right->Evaluate(context);
+            visitor.Expression(IExpressionVisitor::Expression::Sub);
+            break;
         case Operation::Mult:
-            return m_left->Evaluate(context) * m_right->Evaluate(context);
+            visitor.Expression(IExpressionVisitor::Expression::Mult);
+            break;
         case Operation::Div:
-            return m_left->Evaluate(context) / m_right->Evaluate(context);
+            visitor.Expression(IExpressionVisitor::Expression::Div);
+            break;
+        default:
+            throw std::runtime_error("Unknown operation");
     }
 }

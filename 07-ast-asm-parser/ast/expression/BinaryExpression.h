@@ -1,7 +1,8 @@
 #pragma once
 #include "IExpression.h"
+#include "IExpressionNode.h"
 
-class BinaryExpression : public IExpression {
+class BinaryExpression : public IExpression, public IExpressionNode {
 public:
     enum struct Operation
     {
@@ -12,7 +13,10 @@ public:
     };
 
     BinaryExpression(IExpression* left, Operation operation, IExpression* right);
-    double Evaluate(IInterpreterContext &context) const override;
+
+    IExpression *Left() const override;
+    IExpression *Right() const override;
+    void AcceptVisitor(IExpressionVisitor &visitor) const override;
 
 private:
     IExpression* m_left;
