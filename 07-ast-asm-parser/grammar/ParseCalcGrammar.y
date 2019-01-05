@@ -37,6 +37,8 @@
     #include "ast/expression/BinaryExpression.h"
     #include "ast/expression/LiteralExpression.h"
     #include "ast/expression/VariableExpression.h"
+    #include "ast/expression/PrintLiteralExpression.h"
+    #include "ast/expression/PrintVariableExpression.h"
 
     struct SRecord
     {

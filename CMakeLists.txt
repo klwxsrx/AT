@@ -140,6 +140,10 @@ add_executable(AstAsmParser
         07-ast-asm-parser/ast/expression/AssignExpression.cpp
         07-ast-asm-parser/ast/expression/AssignExpression.h
         07-ast-asm-parser/ast/expression/IExpressionNode.h
+        07-ast-asm-parser/ast/expression/PrintLiteralExpression.cpp
+        07-ast-asm-parser/ast/expression/PrintLiteralExpression.h
+        07-ast-asm-parser/ast/expression/PrintVariableExpression.cpp
+        07-ast-asm-parser/ast/expression/PrintVariableExpression.h
         07-ast-asm-parser/ast/visitor/IExpressionVisitor.h
         07-ast-asm-parser/context/IInterpreterContext.h
         07-ast-asm-parser/context/InterpreterContext.cpp
