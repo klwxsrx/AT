@@ -33,12 +33,10 @@
     #include <assert.h>
     #include "grammar/LemonToken.h"
     #include "parser/CalcParser.h"
-    #include "ast/expression/AssignExpression.h"
     #include "ast/expression/BinaryExpression.h"
     #include "ast/expression/LiteralExpression.h"
     #include "ast/expression/VariableExpression.h"
-    #include "ast/expression/PrintLiteralExpression.h"
-    #include "ast/expression/PrintVariableExpression.h"
+    #include "ast/expression/AssignExpression.h"
 
     struct SRecord
     {
@@ -49,15 +47,7 @@
 
 translation_unit ::= statement.
 
-statement ::= statement PRINT NUMBER(A).
-{
-    pParser->AddStatement(pParser->CreateExpression<PrintLiteralExpression>(A.value));
-}
-
-statement ::= statement PRINT ID(A).
-{
-    pParser->AddStatement(pParser->CreateExpression<PrintVariableExpression>(A.id));
-}
+// TODO: вернуть print literal
 
 statement ::= various_expression(B) SEMICOLON.
 {

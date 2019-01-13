@@ -131,23 +131,17 @@ add_executable(AstAsmParser
         07-ast-asm-parser/ast/AstStatementPool.h
         07-ast-asm-parser/ast/AstStatementPool.cpp
         07-ast-asm-parser/ast/expression/IExpression.h
+        07-ast-asm-parser/ast/expression/AssignExpression.h
+        07-ast-asm-parser/ast/expression/AssignExpression.cpp
         07-ast-asm-parser/ast/expression/BinaryExpression.h
         07-ast-asm-parser/ast/expression/BinaryExpression.cpp
         07-ast-asm-parser/ast/expression/LiteralExpression.cpp
         07-ast-asm-parser/ast/expression/LiteralExpression.h
         07-ast-asm-parser/ast/expression/VariableExpression.cpp
         07-ast-asm-parser/ast/expression/VariableExpression.h
-        07-ast-asm-parser/ast/expression/AssignExpression.cpp
-        07-ast-asm-parser/ast/expression/AssignExpression.h
-        07-ast-asm-parser/ast/expression/IExpressionNode.h
-        07-ast-asm-parser/ast/expression/PrintLiteralExpression.cpp
-        07-ast-asm-parser/ast/expression/PrintLiteralExpression.h
-        07-ast-asm-parser/ast/expression/PrintVariableExpression.cpp
-        07-ast-asm-parser/ast/expression/PrintVariableExpression.h
         07-ast-asm-parser/ast/visitor/IExpressionVisitor.h
-        07-ast-asm-parser/context/IInterpreterContext.h
-        07-ast-asm-parser/context/InterpreterContext.cpp
-        07-ast-asm-parser/context/InterpreterContext.h
+        07-ast-asm-parser/ast/visitor/CodeGenerator.cpp
+        07-ast-asm-parser/ast/visitor/CodeGenerator.h
         07-ast-asm-parser/ParseCalcGrammar.h
         07-ast-asm-parser/ParseCalcGrammar.cpp
         07-ast-asm-parser/main.cpp)

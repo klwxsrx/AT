@@ -5,17 +5,13 @@ AssignExpression::AssignExpression(std::string const& variableName, IExpression*
 {
 }
 
-IExpression* AssignExpression::Left() const
+bool AssignExpression::isFinalNode() const
 {
-    return nullptr;
+    return false;
 }
 
-IExpression* AssignExpression::Right() const
+void AssignExpression::AcceptVisitor(IExpressionVisitor &visitor) const
 {
-    return m_expression;
-}
-
-void AssignExpression::AcceptVisitor(IExpressionVisitor& visitor) const
-{
-    return visitor.Expression(IExpressionVisitor::Expression::Assign);
+    m_expression->AcceptVisitor(visitor);
+    visitor.AssignExpression(m_variableName);
 }

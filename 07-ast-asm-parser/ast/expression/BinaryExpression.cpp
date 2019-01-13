@@ -5,28 +5,39 @@ BinaryExpression::BinaryExpression(IExpression* left, Operation operation, IExpr
 {
 }
 
-IExpression *BinaryExpression::Left() const {
-    return m_left;
-}
-
-IExpression *BinaryExpression::Right() const {
-    return m_right;
+bool BinaryExpression::isFinalNode() const
+{
+    return false;
 }
 
 void BinaryExpression::AcceptVisitor(IExpressionVisitor &visitor) const {
+
+//    if (m_left->isFinalNode() && !m_right->isFinalNode()) {
+//        m_right->AcceptVisitor(visitor);
+//        m_left->AcceptVisitor(visitor);
+//    }
+//    else
+//    {
+//        m_left->AcceptVisitor(visitor);
+//        m_right->AcceptVisitor(visitor);
+//    }
+
+    m_left->AcceptVisitor(visitor);
+    m_right->AcceptVisitor(visitor);
+
     switch (m_operation)
     {
         case Operation::Add:
-            visitor.Expression(IExpressionVisitor::Expression::Add);
+            visitor.BinaryExpression(IExpressionVisitor::Expression::Add);
             break;
         case Operation::Sub:
-            visitor.Expression(IExpressionVisitor::Expression::Sub);
+            visitor.BinaryExpression(IExpressionVisitor::Expression::Sub);
             break;
         case Operation::Mult:
-            visitor.Expression(IExpressionVisitor::Expression::Mult);
+            visitor.BinaryExpression(IExpressionVisitor::Expression::Mult);
             break;
         case Operation::Div:
-            visitor.Expression(IExpressionVisitor::Expression::Div);
+            visitor.BinaryExpression(IExpressionVisitor::Expression::Div);
             break;
         default:
             throw std::runtime_error("Unknown operation");

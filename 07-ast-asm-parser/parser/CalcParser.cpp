@@ -13,7 +13,7 @@ const std::map<TokenType, int> CalcParser::m_lemonTokenMap({
     {TT_SEMICOLON, LT_SEMICOLON},
     {TT_LRBRACKET, LT_OPENING_PARENTHESIS},
     {TT_RRBRACKET, LT_CLOSING_PARENTHESIS},
-    {TT_PRINT, LT_PRINT},
+    //{TT_PRINT, LT_PRINT}, // TODO: вернуть
 });
 
 CalcParser::CalcParser()

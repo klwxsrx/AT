@@ -1,14 +1,11 @@
 #pragma once
 #include "IExpression.h"
-#include "IExpressionNode.h"
 
-class VariableExpression : public IExpression, public IExpressionNode {
+class VariableExpression : public IExpression {
 public:
     explicit VariableExpression(std::string const& name);
-
+    bool isFinalNode() const override;
     void AcceptVisitor(IExpressionVisitor &visitor) const override;
-    IExpression *Left() const override;
-    IExpression *Right() const override;
 
 private:
     std::string m_variableName;

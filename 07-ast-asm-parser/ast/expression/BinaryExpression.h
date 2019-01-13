@@ -1,21 +1,18 @@
 #pragma once
 #include "IExpression.h"
-#include "IExpressionNode.h"
 
-class BinaryExpression : public IExpression, public IExpressionNode {
+class BinaryExpression : public IExpression {
 public:
     enum struct Operation
     {
         Add,
         Sub,
         Mult,
-        Div,
+        Div
     };
 
     BinaryExpression(IExpression* left, Operation operation, IExpression* right);
-
-    IExpression *Left() const override;
-    IExpression *Right() const override;
+    bool isFinalNode() const override;
     void AcceptVisitor(IExpressionVisitor &visitor) const override;
 
 private:

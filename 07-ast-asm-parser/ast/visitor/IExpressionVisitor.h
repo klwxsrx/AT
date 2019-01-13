@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 class IExpressionVisitor {
 public:
@@ -6,13 +7,11 @@ public:
         Add,
         Sub,
         Mult,
-        Div,
-        Assign,
-        PrintLiteral,
-        PrintVariable
+        Div
     };
 
-    virtual void Expression(Expression expression) = 0;
+    virtual void AssignExpression(std::string const& variableName) = 0;
+    virtual void BinaryExpression(Expression operation) = 0;
     virtual void LiteralExpression(double value) = 0;
-    virtual void VariableExpression(std::string const& name) = 0;
+    virtual void VariableExpression(std::string const& variableName) = 0;
 };
