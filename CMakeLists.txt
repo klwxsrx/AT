@@ -144,7 +144,7 @@ add_executable(AstAsmParser
         07-ast-asm-parser/ast/visitor/CodeGenerator.h
         07-ast-asm-parser/ParseCalcGrammar.h
         07-ast-asm-parser/ParseCalcGrammar.cpp
-        07-ast-asm-parser/main.cpp)
+        07-ast-asm-parser/main.cpp 07-ast-asm-parser/compiler/NasmCompilerWrapper.cpp 07-ast-asm-parser/compiler/NasmCompilerWrapper.h)
 target_include_directories(AstAsmParser PUBLIC 07-ast-asm-parser)
 target_include_directories(AstAsmParser PRIVATE ${CMAKE_BINARY_DIR})
 add_custom_command(
