@@ -5,23 +5,7 @@ BinaryExpression::BinaryExpression(IExpression* left, Operation operation, IExpr
 {
 }
 
-bool BinaryExpression::isFinalNode() const
-{
-    return false;
-}
-
 void BinaryExpression::AcceptVisitor(IExpressionVisitor &visitor) const {
-
-//    if (m_left->isFinalNode() && !m_right->isFinalNode()) {
-//        m_right->AcceptVisitor(visitor);
-//        m_left->AcceptVisitor(visitor);
-//    }
-//    else
-//    {
-//        m_left->AcceptVisitor(visitor);
-//        m_right->AcceptVisitor(visitor);
-//    }
-
     m_left->AcceptVisitor(visitor);
     m_right->AcceptVisitor(visitor);
 

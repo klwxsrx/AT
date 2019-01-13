@@ -12,7 +12,6 @@ public:
     };
 
     BinaryExpression(IExpression* left, Operation operation, IExpression* right);
-    bool isFinalNode() const override;
     void AcceptVisitor(IExpressionVisitor &visitor) const override;
 
 private:

@@ -5,7 +5,6 @@
 class AssignExpression : public IExpression {
 public:
     AssignExpression(std::string const& variableName, IExpression* expression);
-    bool isFinalNode() const override;
     void AcceptVisitor(IExpressionVisitor &visitor) const override;
 
 private:

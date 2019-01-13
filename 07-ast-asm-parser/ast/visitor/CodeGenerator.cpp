@@ -12,7 +12,7 @@ void CodeGenerator::AssignExpression(std::string const &variableName) {
 }
 
 void CodeGenerator::BinaryExpression(IExpressionVisitor::Expression operation) {
-    Append("pop bx"); // TODO: порядок получения из стека
+    Append("pop bx");
     Append("pop ax");
     Append(GetAsmOperationByExpression(operation) + " ax bx");
     Append("push ax");

@@ -5,11 +5,6 @@ AssignExpression::AssignExpression(std::string const& variableName, IExpression*
 {
 }
 
-bool AssignExpression::isFinalNode() const
-{
-    return false;
-}
-
 void AssignExpression::AcceptVisitor(IExpressionVisitor &visitor) const
 {
     m_expression->AcceptVisitor(visitor);

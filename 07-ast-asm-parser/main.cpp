@@ -8,7 +8,7 @@ int main()
 {
     try
     {
-        CalcLexer lexer("(1+2)*3;");
+        CalcLexer lexer("1+2*3;");
         CalcParser parser;
 
         auto ast = parser.BuildAst(lexer);

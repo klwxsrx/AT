@@ -4,7 +4,6 @@
 class LiteralExpression : public IExpression {
 public:
     explicit LiteralExpression(double value);
-    bool isFinalNode() const override;
     void AcceptVisitor(IExpressionVisitor &visitor) const override;
 
 private:

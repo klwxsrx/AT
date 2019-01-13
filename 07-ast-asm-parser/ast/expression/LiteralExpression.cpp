@@ -5,11 +5,6 @@ LiteralExpression::LiteralExpression(double value)
 {
 }
 
-bool LiteralExpression::isFinalNode() const
-{
-    return true;
-}
-
 void LiteralExpression::AcceptVisitor(IExpressionVisitor &visitor) const {
     visitor.LiteralExpression(m_value);
 }
