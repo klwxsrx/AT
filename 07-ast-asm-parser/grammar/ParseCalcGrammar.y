@@ -37,6 +37,7 @@
     #include "ast/expression/LiteralExpression.h"
     #include "ast/expression/VariableExpression.h"
     #include "ast/expression/AssignExpression.h"
+    #include "ast/expression/PrintVariableExpression.h"
 
     struct SRecord
     {
@@ -45,9 +46,14 @@
 
 } // end %include
 
-translation_unit ::= statement.
+translation_unit ::= program.
 
-// TODO: вернуть print literal
+program ::= statement.
+
+program ::= statement PRINT ID(A) SEMICOLON.
+{
+    pParser->AddStatement(pParser->CreateExpression<PrintVariableExpression>(A.id));
+}
 
 statement ::= various_expression(B) SEMICOLON.
 {

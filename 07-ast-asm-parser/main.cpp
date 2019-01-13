@@ -9,7 +9,7 @@ int main()
 {
     try
     {
-        CalcLexer lexer("(1+2)-(3+4);");
+        CalcLexer lexer("a=(1+2)-(3+4);print a;");
         CalcParser parser;
 
         auto ast = parser.BuildAst(lexer);
@@ -17,12 +17,12 @@ int main()
 
         auto asmCode = generator.GetResult();
 
+        std::cout << asmCode << std::endl; // TODO: delete
+
         std::string executable("calc.exe");
         NasmCompilerWrapper::Compile(asmCode, executable);
 
         std::system(executable.c_str());
-
-        std::cout << asmCode << std::endl; // TODO: delete
     }
     catch (std::exception const& e)
     {

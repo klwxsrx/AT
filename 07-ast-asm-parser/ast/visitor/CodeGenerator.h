@@ -13,7 +13,6 @@ public:
     void BinaryExpression(Expression operation) override;
     void LiteralExpression(double value) override;
     void VariableExpression(std::string const &variableName) override;
-    void PrintExpression(double value) override;
     void PrintExpression(std::string const &variableName) override;
 
 

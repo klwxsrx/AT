@@ -1,9 +1,11 @@
 #include "CodeGenerator.h"
 
-CodeGenerator::CodeGenerator(AstStatementPool const& pool)
+CodeGenerator::CodeGenerator(AstStatementPool const& pool) // TODO: real asm code
     : m_pool(pool)
 {
-    m_pool.GetStatements()[0]->AcceptVisitor(*this);
+    for (auto statement : m_pool.GetStatements()) {
+        statement->AcceptVisitor(*this);
+    }
 }
 
 void CodeGenerator::AssignExpression(std::string const &variableName) {
@@ -28,12 +30,8 @@ void CodeGenerator::VariableExpression(std::string const &variableName) {
     Append("push " + variableName);
 }
 
-void CodeGenerator::PrintExpression(double value) {
-
-}
-
 void CodeGenerator::PrintExpression(std::string const &variableName) {
-
+    Append("printf " + variableName);
 }
 
 std::string CodeGenerator::GetResult()

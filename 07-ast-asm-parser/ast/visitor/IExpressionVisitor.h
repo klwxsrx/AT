@@ -14,6 +14,5 @@ public:
     virtual void BinaryExpression(Expression operation) = 0;
     virtual void LiteralExpression(double value) = 0;
     virtual void VariableExpression(std::string const& variableName) = 0;
-    virtual void PrintExpression(double value) = 0;
     virtual void PrintExpression(std::string const &variableName) = 0;
 };
