@@ -26,7 +26,7 @@ int main()
 {
     try
     {
-        CalcLexer lexer("1+2*3;");
+        CalcLexer lexer("a=1+2*3;b=2+2*2;print a;");
         CalcParser parser;
 
         auto ast = parser.BuildAst(lexer);
@@ -34,12 +34,12 @@ int main()
 
         auto asmCode = generator.GetResult();
 
-        std::cout << asmCode << std::endl; // TODO: delete
+        std::cout << asmCode << std::endl;
 
         std::string executable("calc.exe");
         NasmCompilerWrapper::Compile(asmCode, executable);
 
-        std::cout << executable << " result: \"" << exec("./" + executable) << "\"" << std::endl;
+        std::cout << "Compiled success! Execution result: \"" << exec("./" + executable) << "\"" << std::endl;
     }
     catch (std::exception const& e)
     {

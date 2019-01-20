@@ -5,12 +5,15 @@ CodeGenerator::CodeGenerator(AstStatementPool const& pool)
 {
     for (auto statement : m_pool.GetStatements()) {
         statement->AcceptVisitor(*this);
+        Append("pop rax ; pop last item from stack, because of statement end");
     }
 }
 
 void CodeGenerator::AssignExpression(std::string const &variableName) {
-    Append("pop eax");
-    Append("mov " + variableName + ", eax");
+    Append("; assign variable " + variableName);
+    Append("pop rax");
+    Append("mov qword [rel " + variableName + "], rax");
+    Append("push qword [rel " + variableName + "]");
 
     AddVariableIfNotExists(variableName);
 }
@@ -28,7 +31,9 @@ void CodeGenerator::VariableExpression(std::string const &variableName) {
 }
 
 void CodeGenerator::PrintExpression(std::string const &variableName) {
-    Append("printf " + variableName);
+    Append("; print variable " + variableName);
+    Append("push qword [rel " + variableName + "]");
+    Append("jmp _print_and_exit");
 }
 
 std::string CodeGenerator::GetResult()
@@ -101,8 +106,9 @@ section .text
 	main:
 )code";
     result << m_result;
-    result << R"code(        pop rax ; pop last item
+    result << R"code(        ; end
         ret
+
 section .bss
 )code";
     result << GenerateBssSection();
@@ -127,7 +133,12 @@ void CodeGenerator::AddVariableIfNotExists(std::string const &variableName)
 
 std::string CodeGenerator::GenerateBssSection()
 {
-    return ""; // TODO:
+    std::stringstream result;
+    for (auto const& variable : m_variables)
+    {
+        result << "\t" << variable << ": resb 8" << std::endl;
+    }
+    return result.str();
 }
 
 std::string CodeGenerator::GetAsmDoubleValue(double value)
