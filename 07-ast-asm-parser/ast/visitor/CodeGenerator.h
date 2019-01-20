@@ -20,6 +20,7 @@ public:
 private:
     void Append(std::string &&code);
     void AddVariableIfNotExists(std::string const &variableName);
+    std::string GenerateBssSection();
 
     static std::string GetAsmDoubleValue(double value);
     static std::string GetAsmOperationByExpression(IExpressionVisitor::Expression expresion);

@@ -1,6 +1,6 @@
 #include "CodeGenerator.h"
 
-CodeGenerator::CodeGenerator(AstStatementPool const& pool) // TODO: real asm code
+CodeGenerator::CodeGenerator(AstStatementPool const& pool)
     : m_pool(pool)
 {
     for (auto statement : m_pool.GetStatements()) {
@@ -16,10 +16,7 @@ void CodeGenerator::AssignExpression(std::string const &variableName) {
 }
 
 void CodeGenerator::BinaryExpression(IExpressionVisitor::Expression operation) {
-    Append("pop ebx");
-    Append("pop eax");
-    Append(GetAsmOperationByExpression(operation) + " eax, ebx");
-    Append("push eax");
+    Append("call " + GetAsmOperationByExpression(operation));
 }
 
 void CodeGenerator::LiteralExpression(double value) {
@@ -37,15 +34,88 @@ void CodeGenerator::PrintExpression(std::string const &variableName) {
 std::string CodeGenerator::GetResult()
 {
     std::stringstream result;
-    result << "Before";
+    result << R"code(
+global main
+extern printf
+
+section .text
+    _print_and_exit:
+        pop rbx
+        sub rsp, 8
+        movq xmm0, rbx
+        cvtss2sd xmm0, xmm0
+        mov rdi, print_format
+        mov rax, 1
+        call printf
+        add rsp, 8
+		ret
+
+	_add:
+		pop rcx ; save ret location
+		pop rbx
+		movq xmm0, rbx
+		pop rax
+		movq xmm1, rax
+		addss xmm0, xmm1
+		movq rbx, xmm0
+		push rbx
+		push rcx ; restore ret location
+		ret
+
+	_sub:
+		pop rcx ; save ret location
+		pop rbx
+		movq xmm0, rbx
+		pop rax
+		movq xmm1, rax
+		subss xmm0, xmm1
+		movq rbx, xmm0
+		push rbx
+		push rcx ; restore ret location
+		ret
+
+	_mul:
+		pop rcx ; save ret location
+		pop rbx
+		movq xmm0, rbx
+		pop rax
+		movq xmm1, rax
+		mulss xmm0, xmm1
+		movq rbx, xmm0
+		push rbx
+		push rcx ; restore ret location
+		ret
+
+	_div:
+		pop rcx ; save ret location
+		pop rbx
+		movq xmm0, rbx
+		pop rax
+		movq xmm1, rax
+		divss xmm0, xmm1
+		movq rbx, xmm0
+		push rbx
+		push rcx ; restore ret location
+		ret
+
+	main:
+)code";
     result << m_result;
-    result << "After";
+    result << R"code(        pop rax ; pop last item
+        ret
+section .bss
+)code";
+    result << GenerateBssSection();
+    result << R"code(
+section .data
+	print_format db `%f`, 0
+)code";
     return result.str();
 }
 
 void CodeGenerator::Append(std::string &&code)
 {
-    m_result.append(code.append("\n"));
+    m_result.append("\t\t" + code.append("\n"));
 }
 
 void CodeGenerator::AddVariableIfNotExists(std::string const &variableName)
@@ -53,6 +123,11 @@ void CodeGenerator::AddVariableIfNotExists(std::string const &variableName)
     if (std::find(m_variables.begin(), m_variables.end(), variableName) == m_variables.end()) {
         m_variables.push_back(variableName);
     }
+}
+
+std::string CodeGenerator::GenerateBssSection()
+{
+    return ""; // TODO:
 }
 
 std::string CodeGenerator::GetAsmDoubleValue(double value)
@@ -65,13 +140,13 @@ std::string CodeGenerator::GetAsmOperationByExpression(IExpressionVisitor::Expre
     switch (expresion)
     {
         case IExpressionVisitor::Expression::Add:
-            return "add";
+            return "_add";
         case IExpressionVisitor::Expression::Sub:
-            return "sub";
+            return "_sub";
         case IExpressionVisitor::Expression::Mult:
-            return "mul";
+            return "_mul";
         case IExpressionVisitor::Expression::Div:
-            return "div";
+            return "_div";
         default:
             throw std::runtime_error("Undefined asm operation!");
     }

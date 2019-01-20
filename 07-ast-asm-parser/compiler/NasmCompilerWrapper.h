@@ -2,6 +2,7 @@
 #include <string>
 #include <stdexcept>
 #include <fstream>
+#include <cstring>
 
 class NasmCompilerWrapper {
 public:

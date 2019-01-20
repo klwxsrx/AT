@@ -5,11 +5,28 @@
 #include "ast/visitor/CodeGenerator.h"
 #include "compiler/NasmCompilerWrapper.h"
 
+std::string exec(std::string cmd) {
+    char buffer[128];
+    std::string result = "";
+    FILE* pipe = popen(cmd.c_str(), "r");
+    if (!pipe) throw std::runtime_error("popen() failed!");
+    try {
+        while (fgets(buffer, sizeof buffer, pipe) != NULL) {
+            result += buffer;
+        }
+    } catch (...) {
+        pclose(pipe);
+        throw;
+    }
+    pclose(pipe);
+    return result;
+}
+
 int main()
 {
     try
     {
-        CalcLexer lexer("a=(1+2)-(3+4);print a;");
+        CalcLexer lexer("1+2*3;");
         CalcParser parser;
 
         auto ast = parser.BuildAst(lexer);
@@ -22,7 +39,7 @@ int main()
         std::string executable("calc.exe");
         NasmCompilerWrapper::Compile(asmCode, executable);
 
-        std::system(executable.c_str());
+        std::cout << executable << " result: \"" << exec("./" + executable) << "\"" << std::endl;
     }
     catch (std::exception const& e)
     {

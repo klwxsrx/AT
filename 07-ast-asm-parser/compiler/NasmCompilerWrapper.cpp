@@ -3,8 +3,8 @@
 void NasmCompilerWrapper::Compile(std::string const &code, std::string const &executableName) {
     try {
         auto fileName = CreateSourceCodeFile(executableName, code);
-        ExecuteSystemCommand("nasm -f elf " + fileName);
-        ExecuteSystemCommand("gcc -m32 -o " + executableName + " " + GetObjectFileFromExecutableName(executableName));
+        ExecuteSystemCommand("nasm -f elf64 " + fileName);
+        ExecuteSystemCommand("gcc -no-pie -m64 -o " + executableName + " " + GetObjectFileFromExecutableName(executableName));
         RemoveTempFiles(executableName);
     }
     catch (std::exception const &e) {
@@ -24,7 +24,6 @@ std::string NasmCompilerWrapper::CreateSourceCodeFile(std::string const &executa
     catch (std::exception const &e) {
         throw std::runtime_error("Can't create source file " + sourceFile);
     }
-
 }
 
 void NasmCompilerWrapper::ExecuteSystemCommand(std::string const &cmd) {
@@ -51,8 +50,8 @@ std::string NasmCompilerWrapper::GetObjectFileFromExecutableName(std::string con
 
 void NasmCompilerWrapper::TryRemoveFile(std::string const& fileName)
 {
-    if (!std::remove(fileName.c_str()))
+    if (std::remove(fileName.c_str()) != 0)
     {
-        throw std::runtime_error("Can't remove file " + fileName);
+        throw std::runtime_error("Can't remove file " + fileName + ": " + strerror(errno));
     }
 }
