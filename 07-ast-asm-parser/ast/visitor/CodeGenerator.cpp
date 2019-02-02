@@ -54,7 +54,6 @@ section .text
         call printf
         add rsp, 8
 		ret
-
 	_add:
 		pop rcx ; save ret location
 		pop rbx
@@ -66,7 +65,6 @@ section .text
 		push rbx
 		push rcx ; restore ret location
 		ret
-
 	_sub:
 		pop rcx ; save ret location
 		pop rbx
@@ -78,7 +76,6 @@ section .text
 		push rbx
 		push rcx ; restore ret location
 		ret
-
 	_mul:
 		pop rcx ; save ret location
 		pop rbx
@@ -90,7 +87,6 @@ section .text
 		push rbx
 		push rcx ; restore ret location
 		ret
-
 	_div:
 		pop rcx ; save ret location
 		pop rbx
@@ -102,7 +98,6 @@ section .text
 		push rbx
 		push rcx ; restore ret location
 		ret
-
 	main:
 )code";
     result << m_result;
